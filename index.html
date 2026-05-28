@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RL Map Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --bg2: #13161d;
+      --bg3: #1a1e28;
+      --card: #181c25;
+      --card-hover: #1e2330;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(99,179,255,0.35);
+      --text: #e8eaf0;
+      --text2: #8a90a0;
+      --text3: #555c70;
+      --accent: #4fa3e8;
+      --accent2: #7ec8f5;
+      --accent-glow: rgba(79,163,232,0.15);
+      --tag-bg: rgba(79,163,232,0.1);
+      --tag-text: #7ec8f5;
+      --font: 'Lexend', sans-serif;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(13,15,20,0.95);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+
+    .logo {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    .logo span { color: var(--accent); }
+
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+
+    nav a {
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 400;
+      transition: color 0.15s;
+    }
+
+    nav a:hover { color: var(--text); }
+
+    .btn-contribute {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 7px;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-contribute:hover { background: var(--accent2); color: #0d0f14; }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 5rem 2rem 3.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(79,163,232,0.2);
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero p {
+      font-size: 17px;
+      color: var(--text2);
+      font-weight: 300;
+      max-width: 560px;
+      margin-bottom: 2rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-num {
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text3);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── Search / Filter bar ── */
+    .controls {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 2rem;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text3);
+      pointer-events: none;
+    }
+
+    #search {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      padding: 10px 14px 10px 40px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    #search:focus { border-color: var(--accent); }
+    #search::placeholder { color: var(--text3); }
+
+    .filter-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 400;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+
+    .filter-btn.active {
+      background: var(--accent-glow);
+      border-color: var(--accent);
+      color: var(--accent2);
+    }
+
+    /* ── Grid ── */
+    .grid-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    .grid-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .grid-header h2 {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text2);
+    }
+
+    #map-count {
+      font-size: 13px;
+      color: var(--text3);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Map Card ── */
+    .map-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s, background 0.2s;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .map-card:hover {
+      border-color: var(--border-hover);
+      background: var(--card-hover);
+      transform: translateY(-2px);
+    }
+
+    .map-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      background: var(--bg3);
+      display: block;
+    }
+
+    .map-thumb-placeholder {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--bg3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text3);
+      font-size: 13px;
+    }
+
+    .map-body {
+      padding: 14px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .map-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .tag {
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .tag.training { background: rgba(62,207,142,0.1); color: #6de0a8; }
+    .tag.parkour  { background: rgba(232,143,79,0.1);  color: #f0a86a; }
+    .tag.fun      { background: rgba(192,79,232,0.1);  color: #d07ef5; }
+    .tag.dribble  { background: rgba(79,163,232,0.1);  color: #7ec8f5; }
+    .tag.other    { background: rgba(255,255,255,0.05); color: var(--text2); }
+
+    .map-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+
+    .map-author {
+      font-size: 12px;
+      color: var(--text3);
+      margin-bottom: 8px;
+      font-weight: 400;
+    }
+
+    .map-desc {
+      font-size: 13px;
+      color: var(--text2);
+      font-weight: 300;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .map-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 7px;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+
+    .btn-download:hover { background: var(--accent2); color: #0d0f14; }
+
+    .file-format {
+      font-size: 11px;
+      color: var(--text3);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      padding: 5rem 2rem;
+      color: var(--text3);
+      display: none;
+    }
+
+    .empty h3 { font-size: 17px; color: var(--text2); margin-bottom: 0.5rem; }
+
+    /* ── Contribute banner ── */
+    .contribute {
+      max-width: 1200px;
+      margin: 0 auto 4rem;
+      padding: 0 2rem;
+    }
+
+    .contribute-inner {
+      background: linear-gradient(135deg, rgba(79,163,232,0.08), rgba(79,163,232,0.03));
+      border: 1px solid rgba(79,163,232,0.2);
+      border-radius: var(--radius-lg);
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .contribute-text h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .contribute-text p {
+      font-size: 14px;
+      color: var(--text2);
+      font-weight: 300;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      color: var(--text3);
+      font-size: 13px;
+    }
+
+    footer a { color: var(--text2); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">
+    <div class="logo-icon">🚀</div>
+    RL Map <span>Archive</span>
+  </a>
+  <nav>
+    <a href="#maps">Maps</a>
+    <a href="#contribute">Contribute</a>
+    <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+    <a href="#contribute" class="btn-contribute">+ Submit Map</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-badge">🗺 Community-preserved Workshop maps</div>
+  <h1>The Rocket League<br><span>Workshop Archive</span></h1>
+  <p>A community-driven archive of Rocket League custom Workshop maps. Free to download, forever.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num" id="total-maps">0</span>
+      <span class="stat-label">Maps</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">Free</span>
+      <span class="stat-label">Always</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">Open</span>
+      <span class="stat-label">Source</span>
+    </div>
+  </div>
+</section>
+
+<div class="controls">
+  <div class="search-wrap">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input type="text" id="search" placeholder="Search maps, authors…" autocomplete="off" />
+  </div>
+  <div class="filter-group">
+    <button class="filter-btn active" data-cat="all">All</button>
+    <button class="filter-btn" data-cat="training">Training</button>
+    <button class="filter-btn" data-cat="dribble">Dribble</button>
+    <button class="filter-btn" data-cat="parkour">Parkour</button>
+    <button class="filter-btn" data-cat="fun">Fun</button>
+    <button class="filter-btn" data-cat="other">Other</button>
+  </div>
+</div>
+
+<section class="grid-section" id="maps">
+  <div class="grid-header">
+    <h2>Workshop Maps</h2>
+    <span id="map-count"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty">
+    <h3>No maps found</h3>
+    <p>Try a different search or category filter.</p>
+  </div>
+</section>
+
+<section class="contribute" id="contribute">
+  <div class="contribute-inner">
+    <div class="contribute-text">
+      <h3>Have Workshop maps?</h3>
+      <p>Help grow the archive. Submit your local <code>.upk</code> or <code>.udk</code> files and we'll add them for everyone.</p>
+    </div>
+    <a href="https://github.com/" target="_blank" rel="noopener" class="btn-download">Submit via GitHub →</a>
+  </div>
+</section>
+
+<footer>
+  <p>RL Map Archive — community preserved. Not affiliated with Psyonix or Epic Games. &nbsp;·&nbsp; <a href="https://github.com/">GitHub</a></p>
+</footer>
+
+<script>
+  const CATEGORIES = {
+    'aim': 'training', 'training': 'training', 'warm': 'training',
+    'dribble': 'dribble', 'forbidden': 'dribble',
+    'parkour': 'parkour', 'jump': 'parkour', 'rings': 'parkour', 'speed': 'parkour', 'orbital': 'parkour', 'trail': 'parkour',
+    'bounce': 'fun', 'creative': 'fun', 'bumblebee': 'fun', 'wii': 'fun', 'yoshi': 'fun', 'rooftop': 'fun', 'hornet': 'fun', 'tennis': 'fun',
+  };
+
+  function guessCategory(title) {
+    const t = title.toLowerCase();
+    for (const [k, v] of Object.entries(CATEGORIES)) {
+      if (t.includes(k)) return v;
+    }
+    return 'other';
+  }
+
+  function makeCard(map) {
+    const cat = map.category || guessCategory(map.Title || map.title || '');
+    const title = map.Title || map.title || 'Unknown Map';
+    const author = map.Author || map.author || '';
+    const desc = map.Description || map.description || '';
+    const preview = map.PreviewUrl || map.previewUrl || '';
+    const downloadUrl = map.downloadUrl || '#';
+    const format = map.format || 'upk';
+
+    const card = document.createElement('div');
+    card.className = 'map-card';
+    card.dataset.cat = cat;
+    card.dataset.title = title.toLowerCase();
+    card.dataset.author = author.toLowerCase();
+
+    card.innerHTML = `
+      ${preview
+        ? `<img class="map-thumb" src="${preview}" alt="${title}" loading="lazy" onerror="this.outerHTML='<div class=map-thumb-placeholder>No preview</div>'">`
+        : `<div class="map-thumb-placeholder">No preview</div>`
+      }
+      <div class="map-body">
+        <div class="map-tags"><span class="tag ${cat}">${cat}</span></div>
+        <div class="map-title">${title}</div>
+        ${author ? `<div class="map-author">by ${author}</div>` : ''}
+        ${desc ? `<div class="map-desc">${desc}</div>` : ''}
+        <div class="map-footer">
+          <a class="btn-download" href="${downloadUrl}" download>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download
+          </a>
+          <span class="file-format">.${format}</span>
+        </div>
+      </div>
+    `;
+    return card;
+  }
+
+  let allCards = [];
+  let activeFilter = 'all';
+
+  function renderMaps(maps) {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    allCards = maps.map(makeCard);
+    allCards.forEach(c => grid.appendChild(c));
+    document.getElementById('total-maps').textContent = maps.length;
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const query = document.getElementById('search').value.toLowerCase().trim();
+    let visible = 0;
+    allCards.forEach(card => {
+      const catMatch = activeFilter === 'all' || card.dataset.cat === activeFilter;
+      const textMatch = !query || card.dataset.title.includes(query) || card.dataset.author.includes(query);
+      const show = catMatch && textMatch;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.getElementById('map-count').textContent = visible + ' map' + (visible !== 1 ? 's' : '');
+    document.getElementById('empty').style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  document.getElementById('search').addEventListener('input', applyFilters);
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.cat;
+      applyFilters();
+    });
+  });
+
+  fetch('maps.json')
+    .then(r => r.json())
+    .then(renderMaps)
+    .catch(() => {
+      document.getElementById('empty').style.display = 'block';
+      document.getElementById('empty').innerHTML = '<h3>No maps loaded</h3><p>Add map entries to <code>maps.json</code> to get started.</p>';
+    });
+</script>
+</body>
+</html>
