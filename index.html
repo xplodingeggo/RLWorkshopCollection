@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RL Map Archive</title>
+  <title>RL Workshop Collection</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -67,16 +67,21 @@
       gap: 10px;
     }
 
-    .logo-icon {
-      width: 28px;
-      height: 28px;
-      background: var(--accent);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-    }
+   .logo-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.logo-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
     .logo span { color: var(--accent); }
 
@@ -460,21 +465,23 @@
 
 <header>
   <a href="/" class="logo">
-    <div class="logo-icon">🚀</div>
+    <div class="logo-icon">
+  <img src="favicon.png" alt="RL Icon">
+</div>
     RL Map <span>Archive</span>
   </a>
   <nav>
     <a href="#maps">Maps</a>
     <a href="#contribute">Contribute</a>
-    <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://github.com/xplodingeggo/RLWorkshopCollection#-contributing-map-files" target="_blank" rel="noopener">GitHub</a>
     <a href="#contribute" class="btn-contribute">+ Submit Map</a>
   </nav>
 </header>
 
 <section class="hero">
-  <div class="hero-badge">🗺 Community-preserved Workshop maps</div>
-  <h1>The Rocket League<br><span>Workshop Archive</span></h1>
-  <p>A community-driven archive of Rocket League custom Workshop maps. Free to download, forever.</p>
+  <div class="hero-badge">Archived Workshop maps</div>
+  <h1>Rocket League<br><span>Workshop Archive</span></h1>
+  <p>My archive of Rocket League custom Workshop maps.</p>
   <div class="hero-stats">
     <div class="stat">
       <span class="stat-num" id="total-maps">0</span>
@@ -524,14 +531,14 @@
   <div class="contribute-inner">
     <div class="contribute-text">
       <h3>Have Workshop maps?</h3>
-      <p>Help grow the archive. Submit your local <code>.upk</code> or <code>.udk</code> files and we'll add them for everyone.</p>
+      <p>Help grow the archive. Submit your local <code>.upk</code> or <code>.udk</code> files and we'll add them for everyone (github pull request).</p>
     </div>
-    <a href="https://github.com/" target="_blank" rel="noopener" class="btn-download">Submit via GitHub →</a>
+    <a href="https://github.com/xplodingeggo/RLWorkshopCollection" target="_blank" rel="noopener" class="btn-download">Submit via GitHub →</a>
   </div>
 </section>
 
 <footer>
-  <p>RL Map Archive — community preserved. Not affiliated with Psyonix or Epic Games. &nbsp;·&nbsp; <a href="https://github.com/">GitHub</a></p>
+  <p>RL Workshop Collection — Not affiliated with Psyonix or Epic Games. &nbsp;·&nbsp; <a href="https://github.com/xplodingeggo/RLWorkshopCollection">GitHub</a></p>
 </footer>
 
 <script>
