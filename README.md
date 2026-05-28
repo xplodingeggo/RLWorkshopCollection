@@ -2,7 +2,7 @@
 
 I made an archive with some of my workshop maps i had on my computer because rocketleaguemaps.us doesnt work anymore and this might help some poeple
 
-## 🗺 Live Site
+## website
 
 [xplodingeggo.github.io/RLWorkshopCollection](https://xplodingeggo.github.io/RLWorkshopCollection/)
 
