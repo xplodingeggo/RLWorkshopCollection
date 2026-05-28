@@ -1,22 +1,14 @@
 # RL Map Archive
 
-A community-driven archive of Rocket League custom Workshop maps. Free to download, forever.
-
-> Spiritual successor to rocketleaguemaps.us — preserving Workshop maps for the community.
+I made an archive with some of my workshop maps i had on my computer because rocketleaguemaps.us doesnt work anymore and this might help some poeple
 
 ## 🗺 Live Site
 
-[your-domain.com](https://your-domain.com)
-
-## 📁 How it works
-
-- **`index.html`** — the full website, runs entirely client-side
-- **`maps.json`** — the map database (title, author, description, preview image, download link)
-- Map files are hosted on [Archive.org](https://archive.org) and linked from `maps.json`
+[xplodingeggo.github.io/RLWorkshopCollection](https://xplodingeggo.github.io/RLWorkshopCollection/)
 
 ## ➕ Adding a map
 
-1. Upload the `.upk` / `.udk` file (and preview image if you have it) to [Archive.org](https://archive.org/upload)
+1. Upload the `.upk` / `.udk` file (and preview image if you have it) to any website where you can download a file from
 2. Add an entry to `maps.json`:
 
 ```json
@@ -29,29 +21,15 @@ A community-driven archive of Rocket League custom Workshop maps. Free to downlo
   "format": "upk"
 }
 ```
-
+If you dont know any of the info you can just leave it blank its fine idrc. Just leave it as like ""
 3. Open a Pull Request — that's it!
 
-If a map came with a `.json` sidecar file (from the original Workshop upload), just paste those fields in directly — `Title`, `Author`, `Description`, and `PreviewUrl` match exactly.
-
-## 🤝 Contributing map files
-
-Have old Workshop maps saved locally? Please contribute them!
-
-- Upload to Archive.org (free, permanent)
-- Submit a PR adding them to `maps.json`
-- Or open an Issue with the files and we'll add them
-
-## 🛠 Running locally
-
-No build step needed — just open `index.html` in a browser, or serve with:
-
-```bash
-npx serve .
-# or
-python3 -m http.server
-```
+If a map came with a `.json` sidecar file (from the original Workshop upload), just paste those fields in directly — `Title`, `Author`, `Description`, and `PreviewUrl` match exactly. Unless the description is super long then just shorten it or something because i aint having some long ass description in some small box
 
 ## ⚖️ Legal
 
 Map files belong to their original creators. This archive exists for preservation purposes only. Not affiliated with Psyonix or Epic Games.
+
+## Future additions
+i just want to maybe add like a link to the original workshop maps on steam. I forgot to do it when i was making it but oh well.
+Also just to clarify i did use AI for most of this.
