@@ -21,12 +21,11 @@ I made an archive with some of my workshop maps i had on my computer because roc
   "format": "upk"
 }
 ```
-If you dont know any of the info you can just leave it blank its fine idrc. Just leave it as like ""
+If you dont know any of the info you can just leave it blank its fine idrc. Just leave it blank as ""
 
-3. Open a Pull Request — that's it!
+3. Open a pull request to the github
 
-If a map came with a `.json` sidecar file (from the original Workshop upload), just paste those fields in directly — `Title`, `Author`, `Description`, and `PreviewUrl` match exactly. Unless the description is super long then just shorten it or something because i aint having some long ass description in some small box
-
+If a map came with a `.json` sidecar file (from the original Workshop upload), just paste those fields in directly — `Title`, `Author`, `Description`, and `PreviewUrl` match exactly. Unless the description is super long then just shorten it or something because it probably wont fit in the box
 ## ⚖️ Legal
 
 Map files belong to their original creators. This archive exists for preservation purposes only. Not affiliated with Psyonix or Epic Games.
