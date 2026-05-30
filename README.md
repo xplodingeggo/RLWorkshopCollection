@@ -1,6 +1,6 @@
 # RL Map Archive
 
-I made an archive with some of my workshop maps i had on my computer because rocketleaguemaps.us doesnt work anymore and this might help some poeple
+I made an archive with some of my workshop maps i had on my computer because https://rocketleaguemaps.us/ doesnt work anymore and this might help some poeple. Files are hosted on a cloudflare r2 bucket on my website so downloads should be fast and stable
 
 ## website
 
