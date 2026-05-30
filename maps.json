@@ -1,19 +1,22 @@
-[  {
+[
+  {
     "Title": "Aim_training__By_CoCo",
     "Author": "CoCo",
     "Description": "Shoot the targets and try to get the max score by being as consistent as possible!",
     "category": "training",
     "PreviewUrl": "https://images.steamusercontent.com/ugc/793127482996180511/77AA88ADDC3BAB31D05D507A7F0EC86E282C6B93/?imw=637&imh=358&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true",
     "downloadUrl": "https://files.xplodingeggo.shop/Aim_training__By_CoCo/AimTrainingRL.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1906378036",
     "format": "upk"
   },
   {
     "Title": "Bumblebee Mode",
     "Author": "ThundaSurge",
-    "category":"fun",
+    "category": "fun",
     "Description": "A swarm of bees has invaded Rocket League and are disrupting the game.",
     "PreviewUrl": "https://files.xplodingeggo.shop/Bumblebee_Mode/Bumblebee_Mode.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Bumblebee_Mode/Bumblebee_mode.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2968144588"
     "format": "upk"
   },
   {
@@ -23,15 +26,17 @@
     "category": ["fun", "other"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Creative_Mode/Creative_Mode.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Creative_Mode/CreativeMode.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3615620898",
     "format": "upk"
   },
   {
-    "Title": "Dribble Challenge 2 Overhaul",
+    "Title": "Dribble 2 Overhaul",
     "Author": "0xDigby & Martinn",
     "Description": "An overhaul of Dribbling Challenge #2.",
     "category": ["training", "dribble"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Dribble_2_Overhaul/Dribble_2_Overhaul.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Dribble_2_Overhaul/DribbleChallenge2Overhaul.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1694288506",
     "format": "upk"
   },
   {
@@ -41,6 +46,7 @@
     "category": "training",
     "PreviewUrl": "https://files.xplodingeggo.shop/Hornets_Nest__By_dmc/14649694355003015168_4.jpg",
     "downloadUrl": "https://files.xplodingeggo.shop/Hornets_Nest__By_dmc/hornet.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1827631206",
     "format": "upk"
   },
   {
@@ -50,6 +56,7 @@
     "category": "training",
     "PreviewUrl": "https://files.xplodingeggo.shop/Noob_Dribble__By_dmc/Noob_Dribble__By_dmc.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Noob_Dribble__By_dmc/noobdribble.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1843822064",
     "format": "upk"
   },
   {
@@ -59,6 +66,7 @@
     "category": ["training", "parkour"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_1/Speed_Jump_Trials_1.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_1/speedjumptrail1.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1578331091"
     "format": "upk"
   },
   {
@@ -68,34 +76,38 @@
     "category": ["training", "parkour"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_2/Speed_Jump_Trials_2.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_2/speedjumptrial2.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1581379736",
     "format": "upk"
   },
   {
     "Title": "Speed Trials 3",
     "Author": "dmc",
     "Description": "",
-    "category": ["training", " parkour"],
+    "category": ["training", "parkour"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_3/Speed_Jump_Trials_3.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_3/speedtrail3.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1759763738",
     "format": "upk"
   },
   {
     "Title": "Speed Trials 4",
     "Author": "dmc",
     "Description": "",
-    "category": ["training", " parkour"],
+    "category": ["training", "parkour"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_4/Speed_Jump_Trials_4.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_4/speedtrial4.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1763596534",
     "format": "upk"
   },
   {
     "Title": "Speed Jump Rings 3",
     "Author": "dmc",
     "Description": "",
-    "category": ["training", " parkour"],
+    "category": ["training", "parkour"],
     "PreviewUrl": "https://images.steamusercontent.com/ugc/1008149006328256298/AE30C3ACF9C345501B6F1B79F3666C30E519C9DD/?imw=637&imh=358&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Rings_3__By_dmc/rings3.upk",
-    "format": "udk"
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1671658424",
+    "format": "upk"
   },
   {
     "Title": "Wii Tennis",
@@ -104,6 +116,7 @@
     "category": "fun",
     "PreviewUrl": "https://files.xplodingeggo.shop/wii/20260529142829_1.jpg",
     "downloadUrl": "https://files.xplodingeggo.shop/wii/Wii_Tennis.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2934790488",
     "format": "upk"
   },
   {
@@ -113,6 +126,7 @@
     "category": "fun",
     "PreviewUrl": "https://images.steamusercontent.com/ugc/941708627449931078/D4938C469D96B81E1733D4E0ADB1DB44974906F5/?imw=637&imh=358&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true",
     "downloadUrl": "https://files.xplodingeggo.shop/Yoshi_Circuit__MKRL/Yoshi%20Circuit.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1542921391",
     "format": "upk"
   },
   {
@@ -122,6 +136,7 @@
     "category": "fun",
     "PreviewUrl": "https://files.xplodingeggo.shop/bounce/20260529144244_1.jpg",
     "downloadUrl": "https://files.xplodingeggo.shop/bounce/bouncycastle.upk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1127376287",
     "format": "upk"
   }
 ]

@@ -67,396 +67,232 @@
       gap: 10px;
     }
 
-   .logo-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.logo-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
+    .logo-icon {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .logo-icon img { width: 100%; height: 100%; object-fit: contain; }
     .logo span { color: var(--accent); }
 
     nav { display: flex; gap: 1.5rem; align-items: center; }
-
-    nav a {
-      color: var(--text2);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 400;
-      transition: color 0.15s;
-    }
-
+    nav a { color: var(--text2); text-decoration: none; font-size: 14px; font-weight: 400; transition: color 0.15s; }
     nav a:hover { color: var(--text); }
 
     .btn-contribute {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 7px 16px;
-      border-radius: 7px;
-      font-family: var(--font);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.15s, transform 0.1s;
+      background: var(--accent); color: #fff; border: none;
+      padding: 7px 16px; border-radius: 7px;
+      font-family: var(--font); font-size: 13px; font-weight: 500;
+      cursor: pointer; text-decoration: none;
+      transition: background 0.15s;
     }
-
     .btn-contribute:hover { background: var(--accent2); color: #0d0f14; }
 
     /* ── Hero ── */
-    .hero {
-      padding: 5rem 2rem 3.5rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
+    .hero { padding: 5rem 2rem 3.5rem; max-width: 900px; margin: 0 auto; }
 
     .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--tag-bg);
-      color: var(--tag-text);
-      font-size: 12px;
-      font-weight: 500;
-      padding: 4px 12px;
-      border-radius: 20px;
-      border: 1px solid rgba(79,163,232,0.2);
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.02em;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--tag-bg); color: var(--tag-text);
+      font-size: 12px; font-weight: 500; padding: 4px 12px;
+      border-radius: 20px; border: 1px solid rgba(79,163,232,0.2);
+      margin-bottom: 1.5rem; letter-spacing: 0.02em;
     }
 
     .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 700;
-      line-height: 1.15;
-      margin-bottom: 1rem;
-      letter-spacing: -0.02em;
+      font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700;
+      line-height: 1.15; margin-bottom: 1rem; letter-spacing: -0.02em;
     }
-
     .hero h1 span { color: var(--accent); }
 
-    .hero p {
-      font-size: 17px;
-      color: var(--text2);
-      font-weight: 300;
-      max-width: 560px;
-      margin-bottom: 2rem;
-    }
+    .hero p { font-size: 17px; color: var(--text2); font-weight: 300; max-width: 560px; margin-bottom: 2rem; }
 
-    .hero-stats {
-      display: flex;
-      gap: 2.5rem;
-      flex-wrap: wrap;
-    }
+    .hero-stats { display: flex; gap: 2.5rem; flex-wrap: wrap; }
+    .stat { display: flex; flex-direction: column; }
+    .stat-num { font-size: 26px; font-weight: 600; color: var(--text); }
+    .stat-label { font-size: 12px; color: var(--text3); font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase; }
 
-    .stat {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .stat-num {
-      font-size: 26px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: var(--text3);
-      font-weight: 400;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    /* ── Search / Filter bar ── */
+    /* ── Controls ── */
     .controls {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem 2rem;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
+      max-width: 1200px; margin: 0 auto; padding: 0 2rem 2rem;
+      display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
     }
 
-    .search-wrap {
-      position: relative;
-      flex: 1;
-      min-width: 220px;
-    }
-
-    .search-wrap svg {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text3);
-      pointer-events: none;
-    }
+    .search-wrap { position: relative; flex: 1; min-width: 220px; }
+    .search-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; }
 
     #search {
-      width: 100%;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-family: var(--font);
-      font-size: 14px;
-      padding: 10px 14px 10px 40px;
-      outline: none;
-      transition: border-color 0.15s;
+      width: 100%; background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text); font-family: var(--font);
+      font-size: 14px; padding: 10px 14px 10px 40px; outline: none; transition: border-color 0.15s;
     }
-
     #search:focus { border-color: var(--accent); }
     #search::placeholder { color: var(--text3); }
 
-    .filter-group {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
+    /* ── Category filter buttons (multi-select) ── */
+    .filter-group { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
     .filter-btn {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      color: var(--text2);
-      font-family: var(--font);
-      font-size: 13px;
-      font-weight: 400;
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.15s;
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text2); font-family: var(--font); font-size: 13px; font-weight: 400;
+      padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: all 0.15s;
+      user-select: none;
+    }
+    .filter-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+    .filter-btn.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent2); }
+
+    /* ── Author multi-select dropdown ── */
+    .author-dropdown-wrap { position: relative; }
+
+    .author-dropdown-btn {
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text2); font-family: var(--font); font-size: 13px; font-weight: 400;
+      padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; gap: 6px; white-space: nowrap; user-select: none;
+    }
+    .author-dropdown-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+    .author-dropdown-btn.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent2); }
+    .author-dropdown-btn svg.chevron { transition: transform 0.15s; flex-shrink: 0; }
+    .author-dropdown-btn.open svg.chevron { transform: rotate(180deg); }
+
+    .author-badge {
+      background: var(--accent); color: #fff;
+      font-size: 11px; font-weight: 600;
+      padding: 1px 6px; border-radius: 10px;
+      line-height: 1.6;
     }
 
-    .filter-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+    .author-dropdown-menu {
+      display: none; position: absolute; top: calc(100% + 6px); left: 0;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); min-width: 200px; max-height: 280px;
+      overflow-y: auto; z-index: 200;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4); padding: 4px;
+    }
+    .author-dropdown-menu.open { display: block; }
+    .author-dropdown-menu::-webkit-scrollbar { width: 4px; }
+    .author-dropdown-menu::-webkit-scrollbar-track { background: transparent; }
+    .author-dropdown-menu::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-    .filter-btn.active {
-      background: var(--accent-glow);
-      border-color: var(--accent);
-      color: var(--accent2);
+    .author-option {
+      display: flex; align-items: center; gap: 9px;
+      width: 100%; text-align: left; background: none; border: none;
+      color: var(--text2); font-family: var(--font); font-size: 13px; font-weight: 400;
+      padding: 8px 10px; border-radius: 6px; cursor: pointer;
+      transition: background 0.1s, color 0.1s; white-space: nowrap;
+    }
+    .author-option:hover { background: var(--bg3); color: var(--text); }
+
+    /* custom checkbox */
+    .author-check {
+      width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0;
+      border: 1px solid var(--text3);
+      background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.12s, background 0.12s;
+    }
+    .author-option.selected .author-check {
+      background: var(--accent); border-color: var(--accent);
+    }
+    .author-check svg { display: none; }
+    .author-option.selected .author-check svg { display: block; }
+
+    .author-divider {
+      height: 1px; background: var(--border); margin: 4px 0;
     }
 
     /* ── Grid ── */
-    .grid-section {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem 4rem;
-    }
+    .grid-section { max-width: 1200px; margin: 0 auto; padding: 0 2rem 4rem; }
+    .grid-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+    .grid-header h2 { font-size: 15px; font-weight: 500; color: var(--text2); }
+    #map-count { font-size: 13px; color: var(--text3); }
 
-    .grid-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.25rem;
-    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
 
-    .grid-header h2 {
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text2);
-    }
-
-    #map-count {
-      font-size: 13px;
-      color: var(--text3);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
-    }
-
-    /* ── Map Card ── */
+    /* ── Map Card — no pointer cursor on the card itself ── */
     .map-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden;
       transition: border-color 0.2s, transform 0.2s, background 0.2s;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
+      cursor: default;  /* ← plain arrow, not pointer */
+      display: flex; flex-direction: column;
     }
+    .map-card:hover { border-color: var(--border-hover); background: var(--card-hover); transform: translateY(-2px); }
 
-    .map-card:hover {
-      border-color: var(--border-hover);
-      background: var(--card-hover);
-      transform: translateY(-2px);
-    }
-
-    .map-thumb {
-      width: 100%;
-      aspect-ratio: 16/9;
-      object-fit: cover;
-      background: var(--bg3);
-      display: block;
-    }
-
+    .map-thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: var(--bg3); display: block; }
     .map-thumb-placeholder {
-      width: 100%;
-      aspect-ratio: 16/9;
-      background: var(--bg3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text3);
-      font-size: 13px;
+      width: 100%; aspect-ratio: 16/9; background: var(--bg3);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text3); font-size: 13px;
     }
 
-    .map-body {
-      padding: 14px 16px 16px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
+    .map-body { padding: 14px 16px 16px; display: flex; flex-direction: column; flex: 1; }
 
-    .map-tags {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
+    .map-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
 
     .tag {
-      background: var(--tag-bg);
-      color: var(--tag-text);
-      font-size: 11px;
-      font-weight: 500;
-      padding: 2px 9px;
-      border-radius: 20px;
-      letter-spacing: 0.02em;
+      background: var(--tag-bg); color: var(--tag-text);
+      font-size: 11px; font-weight: 500; padding: 2px 9px;
+      border-radius: 20px; letter-spacing: 0.02em;
     }
-
     .tag.training { background: rgba(62,207,142,0.1); color: #6de0a8; }
     .tag.parkour  { background: rgba(232,143,79,0.1);  color: #f0a86a; }
     .tag.fun      { background: rgba(192,79,232,0.1);  color: #d07ef5; }
     .tag.dribble  { background: rgba(79,163,232,0.1);  color: #7ec8f5; }
     .tag.other    { background: rgba(255,255,255,0.05); color: var(--text2); }
 
-    .map-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 4px;
-      line-height: 1.3;
-    }
-
-    .map-author {
-      font-size: 12px;
-      color: var(--text3);
-      margin-bottom: 8px;
-      font-weight: 400;
-    }
-
+    .map-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
+    .map-author { font-size: 12px; color: var(--text3); margin-bottom: 8px; font-weight: 400; }
     .map-desc {
-      font-size: 13px;
-      color: var(--text2);
-      font-weight: 300;
-      flex: 1;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      line-height: 1.5;
-      margin-bottom: 14px;
+      font-size: 13px; color: var(--text2); font-weight: 300; flex: 1;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+      overflow: hidden; line-height: 1.5; margin-bottom: 14px;
     }
 
-    .map-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
+    .map-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
     .btn-download {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 7px;
-      font-family: var(--font);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.15s;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent); color: #fff; border: none;
+      padding: 8px 16px; border-radius: 7px;
+      font-family: var(--font); font-size: 13px; font-weight: 500;
+      cursor: pointer; text-decoration: none; transition: background 0.15s;
     }
-
     .btn-download:hover { background: var(--accent2); color: #0d0f14; }
 
-    .file-format {
-      font-size: 11px;
-      color: var(--text3);
-      font-weight: 400;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
+    /* right side of footer: format badge + optional steam icon */
+    .map-meta { display: flex; align-items: center; gap: 8px; }
 
-    /* ── Empty state ── */
-    .empty {
-      text-align: center;
-      padding: 5rem 2rem;
-      color: var(--text3);
-      display: none;
-    }
+    .file-format { font-size: 11px; color: var(--text3); font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase; }
 
+    .btn-steam {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 6px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--text3); text-decoration: none;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .btn-steam:hover { background: rgba(103,193,245,0.15); border-color: #67c1f5; color: #67c1f5; }
+
+    /* ── Empty ── */
+    .empty { text-align: center; padding: 5rem 2rem; color: var(--text3); display: none; }
     .empty h3 { font-size: 17px; color: var(--text2); margin-bottom: 0.5rem; }
 
-    /* ── Contribute banner ── */
-    .contribute {
-      max-width: 1200px;
-      margin: 0 auto 4rem;
-      padding: 0 2rem;
-    }
-
+    /* ── Contribute ── */
+    .contribute { max-width: 1200px; margin: 0 auto 4rem; padding: 0 2rem; }
     .contribute-inner {
       background: linear-gradient(135deg, rgba(79,163,232,0.08), rgba(79,163,232,0.03));
-      border: 1px solid rgba(79,163,232,0.2);
-      border-radius: var(--radius-lg);
-      padding: 2rem 2.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 2rem;
-      flex-wrap: wrap;
+      border: 1px solid rgba(79,163,232,0.2); border-radius: var(--radius-lg);
+      padding: 2rem 2.5rem; display: flex; align-items: center;
+      justify-content: space-between; gap: 2rem; flex-wrap: wrap;
     }
-
-    .contribute-text h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 0.4rem;
-    }
-
-    .contribute-text p {
-      font-size: 14px;
-      color: var(--text2);
-      font-weight: 300;
-    }
+    .contribute-text h3 { font-size: 18px; font-weight: 600; margin-bottom: 0.4rem; }
+    .contribute-text p { font-size: 14px; color: var(--text2); font-weight: 300; }
 
     /* ── Footer ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem;
-      text-align: center;
-      color: var(--text3);
-      font-size: 13px;
-    }
-
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--text3); font-size: 13px; }
     footer a { color: var(--text2); text-decoration: none; }
     footer a:hover { color: var(--accent); }
   </style>
@@ -465,9 +301,7 @@
 
 <header>
   <a href="/" class="logo">
-    <div class="logo-icon">
-  <img src="favicon.png" alt="RL Icon">
-</div>
+    <div class="logo-icon"><img src="favicon.png" alt="RL Icon"></div>
     RL Map <span>Archive</span>
   </a>
   <nav>
@@ -485,14 +319,6 @@
       <span class="stat-num" id="total-maps">0</span>
       <span class="stat-label">Maps</span>
     </div>
-    <div class="stat">
-      <span class="stat-num"></span>
-      <span class="stat-label"></span>
-    </div>
-    <div class="stat">
-      <span class="stat-num"></span>
-      <span class="stat-label"></span>
-    </div>
   </div>
 </section>
 
@@ -503,13 +329,30 @@
     </svg>
     <input type="text" id="search" placeholder="Search maps, authors…" autocomplete="off" />
   </div>
-  <div class="filter-group">
+
+  <!-- Category multi-select buttons -->
+  <div class="filter-group" id="cat-group">
     <button class="filter-btn active" data-cat="all">All</button>
     <button class="filter-btn" data-cat="training">Training</button>
     <button class="filter-btn" data-cat="dribble">Dribble</button>
     <button class="filter-btn" data-cat="parkour">Parkour</button>
     <button class="filter-btn" data-cat="fun">Fun</button>
     <button class="filter-btn" data-cat="other">Other</button>
+  </div>
+
+  <!-- Author multi-select dropdown -->
+  <div class="author-dropdown-wrap" id="author-wrap">
+    <button class="author-dropdown-btn" id="author-btn" aria-haspopup="listbox" aria-expanded="false">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span id="author-label">Author</span>
+      <span id="author-badge" class="author-badge" style="display:none"></span>
+      <svg class="chevron" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </button>
+    <div class="author-dropdown-menu" id="author-menu" role="listbox"></div>
   </div>
 </div>
 
@@ -521,7 +364,7 @@
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty">
     <h3>No maps found</h3>
-    <p>Try a different search or category filter.</p>
+    <p>Try a different search or filter.</p>
   </div>
 </section>
 
@@ -540,94 +383,268 @@
 </footer>
 
 <script>
-  const CATEGORIES = {
-    'aim': 'training', 'training': 'training', 'warm': 'training',
-    'dribble': 'dribble', 'forbidden': 'dribble',
-    'parkour': 'parkour', 'jump': 'parkour', 'rings': 'parkour', 'speed': 'parkour', 'orbital': 'parkour', 'trail': 'parkour',
-    'bounce': 'fun', 'creative': 'fun', 'bumblebee': 'fun', 'wii': 'fun', 'yoshi': 'fun', 'rooftop': 'fun', 'hornet': 'fun', 'tennis': 'fun',
+  // ── Category helpers ─────────────────────────────────────
+  const CAT_HINTS = {
+    'aim':'training','training':'training','warm':'training',
+    'dribble':'dribble','forbidden':'dribble',
+    'parkour':'parkour','jump':'parkour','rings':'parkour','speed':'parkour','orbital':'parkour','trail':'parkour',
+    'bounce':'fun','creative':'fun','bumblebee':'fun','wii':'fun','yoshi':'fun','rooftop':'fun','hornet':'fun','tennis':'fun',
   };
 
   function guessCategory(title) {
     const t = title.toLowerCase();
-    for (const [k, v] of Object.entries(CATEGORIES)) {
-      if (t.includes(k)) return v;
-    }
+    for (const [k, v] of Object.entries(CAT_HINTS)) { if (t.includes(k)) return v; }
     return 'other';
   }
 
+  function normaliseCategories(raw, title) {
+    if (!raw) return [guessCategory(title)];
+    const list = Array.isArray(raw) ? raw : [raw];
+    return list.map(c => c.trim().toLowerCase()).filter(Boolean);
+  }
+
+  // ── State ────────────────────────────────────────────────
+  let allCards = [];
+  let activeCats = new Set();   // empty = "All"
+  let activeAuthors = new Set(); // empty = "All"
+
+  // ── Card factory ─────────────────────────────────────────
   function makeCard(map) {
-    const cat = map.category || guessCategory(map.Title || map.title || '');
-    const title = map.Title || map.title || 'Unknown Map';
-    const author = map.Author || map.author || '';
-    const desc = map.Description || map.description || '';
-    const preview = map.PreviewUrl || map.previewUrl || '';
+    const title     = map.Title       || map.title       || 'Unknown Map';
+    const cats      = normaliseCategories(map.category, title);
+    const author    = map.Author      || map.author      || '';
+    const desc      = map.Description || map.description || '';
+    const preview   = map.PreviewUrl  || map.previewUrl  || '';
     const downloadUrl = map.downloadUrl || '';
-    const format = map.format || 'upk';
+    const steamUrl  = map.steamUrl    || '';
+    const format    = map.format      || 'upk';
 
     const card = document.createElement('div');
     card.className = 'map-card';
-    card.dataset.cat = cat;
-    card.dataset.title = title.toLowerCase();
+    card.dataset.cats   = JSON.stringify(cats);
+    card.dataset.title  = title.toLowerCase();
     card.dataset.author = author.toLowerCase();
+
+    const tagsHtml = cats.map(c => `<span class="tag ${c}">${c}</span>`).join('');
+
+    const steamHtml = steamUrl
+      ? `<a class="btn-steam" href="${steamUrl}" target="_blank" rel="noopener" title="View on Steam Workshop">
+           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+             <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.187.008l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.029 4.524 4.524s-2.03 4.524-4.524 4.524h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.497 1.009 2.455-.397.957-1.494 1.409-2.455 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.252 0-2.265-1.014-2.265-2.265z"/>
+           </svg>
+         </a>`
+      : '';
 
     card.innerHTML = `
       ${preview
         ? `<img class="map-thumb" src="${preview}" alt="${title}" loading="lazy" onerror="this.outerHTML='<div class=map-thumb-placeholder>No preview</div>'">`
-        : `<div class="map-thumb-placeholder">No preview</div>`
-      }
+        : `<div class="map-thumb-placeholder">No preview</div>`}
       <div class="map-body">
-        <div class="map-tags"><span class="tag ${cat}">${cat}</span></div>
+        <div class="map-tags">${tagsHtml}</div>
         <div class="map-title">${title}</div>
         ${author ? `<div class="map-author">by ${author}</div>` : ''}
-        ${desc ? `<div class="map-desc">${desc}</div>` : ''}
+        ${desc    ? `<div class="map-desc">${desc}</div>`        : ''}
         <div class="map-footer">
           <a class="btn-download" href="${downloadUrl}" download>
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
             Download
           </a>
-          <span class="file-format">.${format}</span>
+          <div class="map-meta">
+            ${steamHtml}
+            <span class="file-format">.${format}</span>
+          </div>
         </div>
       </div>
     `;
     return card;
   }
 
-  let allCards = [];
-  let activeFilter = 'all';
+  // ── Category multi-select ────────────────────────────────
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.cat;
 
-  function renderMaps(maps) {
-    const grid = document.getElementById('grid');
-    grid.innerHTML = '';
-    allCards = maps.map(makeCard);
-    allCards.forEach(c => grid.appendChild(c));
-    document.getElementById('total-maps').textContent = maps.length;
+      if (cat === 'all') {
+        // "All" clears all specific selections
+        activeCats.clear();
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      } else {
+        // Toggle the clicked category
+        if (activeCats.has(cat)) {
+          activeCats.delete(cat);
+        } else {
+          activeCats.add(cat);
+        }
+        // If nothing selected, revert to "All"
+        if (activeCats.size === 0) {
+          document.querySelector('.filter-btn[data-cat="all"]').classList.add('active');
+          document.querySelectorAll('.filter-btn:not([data-cat="all"])').forEach(b => b.classList.remove('active'));
+        } else {
+          document.querySelector('.filter-btn[data-cat="all"]').classList.remove('active');
+          btn.classList.toggle('active', activeCats.has(cat));
+        }
+      }
+      applyFilters();
+    });
+  });
+
+  // ── Author multi-select dropdown ─────────────────────────
+  function buildAuthorDropdown(maps) {
+    const authors = Array.from(
+      new Set(maps.map(m => (m.Author || m.author || '').trim()).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b));
+
+    const menu = document.getElementById('author-menu');
+    menu.innerHTML = '';
+
+    // "All Authors" clear option
+    const allOpt = makeAuthorOption('__all__', 'All Authors');
+    allOpt.classList.add('selected');
+    menu.appendChild(allOpt);
+
+    const div = document.createElement('div');
+    div.className = 'author-divider';
+    menu.appendChild(div);
+
+    authors.forEach(author => menu.appendChild(makeAuthorOption(author, author)));
+  }
+
+  function makeAuthorOption(value, label) {
+    const btn = document.createElement('button');
+    btn.className = 'author-option';
+    btn.dataset.author = value;
+    btn.setAttribute('role', 'option');
+    btn.innerHTML = `
+      <span class="author-check">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1,5 3.5,7.5 8,2"/>
+        </svg>
+      </span>
+      ${label}
+    `;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleAuthor(value);
+    });
+    return btn;
+  }
+
+  function toggleAuthor(value) {
+    const allOpt = document.querySelector('.author-option[data-author="__all__"]');
+
+    if (value === '__all__') {
+      activeAuthors.clear();
+      document.querySelectorAll('.author-option').forEach(o => o.classList.remove('selected'));
+      allOpt.classList.add('selected');
+    } else {
+      if (activeAuthors.has(value)) {
+        activeAuthors.delete(value);
+      } else {
+        activeAuthors.add(value);
+      }
+
+      if (activeAuthors.size === 0) {
+        allOpt.classList.add('selected');
+      } else {
+        allOpt.classList.remove('selected');
+      }
+
+      // Sync checkboxes
+      document.querySelectorAll('.author-option:not([data-author="__all__"])').forEach(o => {
+        o.classList.toggle('selected', activeAuthors.has(o.dataset.author));
+      });
+    }
+
+    updateAuthorBtn();
     applyFilters();
   }
 
+  function updateAuthorBtn() {
+    const btn    = document.getElementById('author-btn');
+    const label  = document.getElementById('author-label');
+    const badge  = document.getElementById('author-badge');
+    const count  = activeAuthors.size;
+
+    if (count === 0) {
+      label.textContent = 'Author';
+      badge.style.display = 'none';
+      btn.classList.remove('active');
+    } else if (count === 1) {
+      label.textContent = [...activeAuthors][0];
+      badge.style.display = 'none';
+      btn.classList.add('active');
+    } else {
+      label.textContent = 'Authors';
+      badge.textContent = count;
+      badge.style.display = '';
+      btn.classList.add('active');
+    }
+  }
+
+  // Toggle dropdown open/close
+  document.getElementById('author-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const btn  = document.getElementById('author-btn');
+    const menu = document.getElementById('author-menu');
+    const isOpen = menu.classList.contains('open');
+    btn.classList.toggle('open', !isOpen);
+    btn.setAttribute('aria-expanded', String(!isOpen));
+    menu.classList.toggle('open', !isOpen);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!document.getElementById('author-wrap').contains(e.target)) {
+      const btn  = document.getElementById('author-btn');
+      const menu = document.getElementById('author-menu');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      menu.classList.remove('open');
+    }
+  });
+
+  // ── Filter engine ────────────────────────────────────────
   function applyFilters() {
     const query = document.getElementById('search').value.toLowerCase().trim();
     let visible = 0;
+
     allCards.forEach(card => {
-      const catMatch = activeFilter === 'all' || card.dataset.cat === activeFilter;
+      const cardCats = JSON.parse(card.dataset.cats);
+
+      // Category: pass if no cats selected OR card has at least one matching cat
+      const catMatch = activeCats.size === 0 || cardCats.some(c => activeCats.has(c));
+
+      // Author: pass if no authors selected OR card author is in the set
+      const authorMatch = activeAuthors.size === 0 || activeAuthors.has(card.dataset.author)
+        || [...activeAuthors].some(a => a.toLowerCase() === card.dataset.author);
+
+      // Text search
       const textMatch = !query || card.dataset.title.includes(query) || card.dataset.author.includes(query);
-      const show = catMatch && textMatch;
+
+      const show = catMatch && authorMatch && textMatch;
       card.style.display = show ? '' : 'none';
       if (show) visible++;
     });
+
     document.getElementById('map-count').textContent = visible + ' map' + (visible !== 1 ? 's' : '');
     document.getElementById('empty').style.display = visible === 0 ? 'block' : 'none';
   }
 
   document.getElementById('search').addEventListener('input', applyFilters);
 
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeFilter = btn.dataset.cat;
-      applyFilters();
-    });
-  });
+  // ── Boot ─────────────────────────────────────────────────
+  function renderMaps(maps) {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    allCards = maps.map(makeCard);
+    allCards.forEach(c => grid.appendChild(c));
+    document.getElementById('total-maps').textContent = maps.length;
+    buildAuthorDropdown(maps);
+    applyFilters();
+  }
 
   fetch('maps.json')
     .then(r => r.json())
