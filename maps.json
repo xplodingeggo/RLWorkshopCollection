@@ -2,7 +2,7 @@
     "Title": "Aim_training__By_CoCo",
     "Author": "CoCo",
     "Description": "Shoot the targets and try to get the max score by being as consistent as possible!",
-    "category": "Training",
+    "category": "training",
     "PreviewUrl": "https://images.steamusercontent.com/ugc/793127482996180511/77AA88ADDC3BAB31D05D507A7F0EC86E282C6B93/?imw=637&imh=358&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true",
     "downloadUrl": "https://files.xplodingeggo.shop/Aim_training__By_CoCo/AimTrainingRL.upk",
     "format": "upk"
@@ -10,7 +10,7 @@
   {
     "Title": "Bumblebee Mode",
     "Author": "ThundaSurge",
-    "category":"Fun",
+    "category":"fun",
     "Description": "A swarm of bees has invaded Rocket League and are disrupting the game.",
     "PreviewUrl": "https://files.xplodingeggo.shop/Bumblebee_Mode/Bumblebee_Mode.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Bumblebee_Mode/Bumblebee_mode.upk",
@@ -20,7 +20,7 @@
     "Title": "Creative Mode",
     "Author": "Ecrase-Patate",
     "Description": "Create your own maps!",
-    "category": ["Fun", "Other"],
+    "category": ["fun", "other"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Creative_Mode/Creative_Mode.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Creative_Mode/CreativeMode.upk",
     "format": "upk"
@@ -29,7 +29,7 @@
     "Title": "Dribble Challenge 2 Overhaul",
     "Author": "0xDigby & Martinn",
     "Description": "An overhaul of Dribbling Challenge #2.",
-    "category": ["Training", "Dribble"],
+    "category": ["training", "dribble"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Dribble_2_Overhaul/Dribble_2_Overhaul.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Dribble_2_Overhaul/DribbleChallenge2Overhaul.upk",
     "format": "upk"
@@ -38,7 +38,7 @@
     "Title": "Hornet's nest",
     "Author": "dmc",
     "Description": "",
-    "category": "Training",
+    "category": "training",
     "PreviewUrl": "https://files.xplodingeggo.shop/Hornets_Nest__By_dmc/14649694355003015168_4.jpg",
     "downloadUrl": "https://files.xplodingeggo.shop/Hornets_Nest__By_dmc/hornet.upk",
     "format": "upk"
@@ -47,7 +47,7 @@
     "Title": "Noob Dribble",
     "Author": "dmc",
     "Description": "Dribble map by dmc",
-    "category": "Training",
+    "category": "training",
     "PreviewUrl": "https://files.xplodingeggo.shop/Noob_Dribble__By_dmc/Noob_Dribble__By_dmc.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Noob_Dribble__By_dmc/noobdribble.upk",
     "format": "upk"
@@ -56,7 +56,7 @@
     "Title": "Speed Jump Trials 1",
     "Author": "dmc",
     "Description": "",
-    "category": ["Training", "Parkour"],
+    "category": ["training", "parkour"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_1/Speed_Jump_Trials_1.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_1/speedjumptrail1.upk",
     "format": "upk"
@@ -65,7 +65,7 @@
     "Title": "Speed Jump Trial 2",
     "Author": "dmc",
     "Description": "",
-    "category": ["Training", "Parkour"],
+    "category": ["training", "parkour"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_2/Speed_Jump_Trials_2.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_2/speedjumptrial2.upk",
     "format": "upk"
@@ -74,7 +74,7 @@
     "Title": "Speed Trials 3",
     "Author": "dmc",
     "Description": "",
-    "category": ["Training", "Parkour"],
+    "category": ["training", " parkour"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_3/Speed_Jump_Trials_3.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_3/speedtrail3.upk",
     "format": "upk"
@@ -83,7 +83,7 @@
     "Title": "Speed Trials 4",
     "Author": "dmc",
     "Description": "",
-    "category": ["Training", "Parkour"],
+    "category": ["training", " parkour"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_4/Speed_Jump_Trials_4.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_4/speedtrial4.upk",
     "format": "upk"
@@ -92,7 +92,7 @@
     "Title": "Speed Jump Rings 3",
     "Author": "dmc",
     "Description": "",
-    "category": ["Training", "Parkour"],
+    "category": ["training", " parkour"],
     "PreviewUrl": "https://images.steamusercontent.com/ugc/1008149006328256298/AE30C3ACF9C345501B6F1B79F3666C30E519C9DD/?imw=637&imh=358&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Rings_3__By_dmc/rings3.upk",
     "format": "udk"
@@ -101,7 +101,7 @@
     "Title": "Wii Tennis",
     "Author": "JRsuhi",
     "Description": "Play Tennis in Rocket League!",
-    "category": "Fun",
+    "category": "fun",
     "PreviewUrl": "https://files.xplodingeggo.shop/wii/20260529142829_1.jpg",
     "downloadUrl": "https://files.xplodingeggo.shop/wii/Wii_Tennis.upk",
     "format": "upk"
@@ -110,7 +110,7 @@
     "Title": "Yoshi Circuit",
     "Author": "thanrek",
     "Description": "Yoshi Circuit is the first map in a series of maps I'm making.",
-    "category": "Fun",
+    "category": "fun",
     "PreviewUrl": "https://images.steamusercontent.com/ugc/941708627449931078/D4938C469D96B81E1733D4E0ADB1DB44974906F5/?imw=637&imh=358&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true",
     "downloadUrl": "https://files.xplodingeggo.shop/Yoshi_Circuit__MKRL/Yoshi%20Circuit.upk",
     "format": "upk"
@@ -119,7 +119,7 @@
     "Title": "Bouncy Castle",
     "Author": "SteamWorkshop",
     "Description": "A fun custom map with extra-bouncy walls and floors for chaotic gameplay.",
-    "category": "Fun",
+    "category": "fun",
     "PreviewUrl": "https://files.xplodingeggo.shop/bounce/20260529144244_1.jpg",
     "downloadUrl": "https://files.xplodingeggo.shop/bounce/bouncycastle.upk",
     "format": "upk"
