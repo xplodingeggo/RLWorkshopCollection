@@ -16,7 +16,7 @@
     "Description": "A swarm of bees has invaded Rocket League and are disrupting the game.",
     "PreviewUrl": "https://files.xplodingeggo.shop/Bumblebee_Mode/Bumblebee_Mode.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Bumblebee_Mode/Bumblebee_mode.upk",
-    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2968144588"
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2968144588",
     "format": "upk"
   },
   {
@@ -42,7 +42,7 @@
   {
     "Title": "Hornet's nest",
     "Author": "dmc",
-    "Description": "",
+    "Description": "Obstacle Arena. Difficulty: Intermediate",
     "category": "training",
     "PreviewUrl": "https://files.xplodingeggo.shop/Hornets_Nest__By_dmc/14649694355003015168_4.jpg",
     "downloadUrl": "https://files.xplodingeggo.shop/Hornets_Nest__By_dmc/hornet.upk",
@@ -52,7 +52,7 @@
   {
     "Title": "Noob Dribble",
     "Author": "dmc",
-    "Description": "Dribble map by dmc",
+    "Description": "A beginner friendly dribbling course. Difficulty: Intermediate",
     "category": "training",
     "PreviewUrl": "https://files.xplodingeggo.shop/Noob_Dribble__By_dmc/Noob_Dribble__By_dmc.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Noob_Dribble__By_dmc/noobdribble.upk",
@@ -62,17 +62,17 @@
   {
     "Title": "Speed Jump Trials 1",
     "Author": "dmc",
-    "Description": "",
+    "Description": "An Obstacle Course. Difficulty: Easy",
     "category": ["training", "parkour"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_1/Speed_Jump_Trials_1.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_1/speedjumptrail1.upk",
-    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1578331091"
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1578331091",
     "format": "upk"
   },
   {
     "Title": "Speed Jump Trial 2",
     "Author": "dmc",
-    "Description": "",
+    "Description": "An obstacle course. Difficulty: Intermediate - Hard",
     "category": ["training", "parkour"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_2/Speed_Jump_Trials_2.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_2/speedjumptrial2.upk",
@@ -82,7 +82,7 @@
   {
     "Title": "Speed Trials 3",
     "Author": "dmc",
-    "Description": "",
+    "Description": "An Obstacle Course. Difficulty: Easy",
     "category": ["training", "parkour"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_3/Speed_Jump_Trials_3.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_3/speedtrail3.upk",
@@ -92,7 +92,7 @@
   {
     "Title": "Speed Trials 4",
     "Author": "dmc",
-    "Description": "",
+    "Description": "An Obstacle Course. Difficulty: Easy",
     "category": ["training", "parkour"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_4/Speed_Jump_Trials_4.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Trials_4/speedtrial4.upk",
@@ -102,7 +102,7 @@
   {
     "Title": "Speed Jump Rings 3",
     "Author": "dmc",
-    "Description": "",
+    "Description": "An obstacle course. Difficulty: Intermediate - Hard",
     "category": ["training", "parkour"],
     "PreviewUrl": "https://images.steamusercontent.com/ugc/1008149006328256298/AE30C3ACF9C345501B6F1B79F3666C30E519C9DD/?imw=637&imh=358&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true",
     "downloadUrl": "https://files.xplodingeggo.shop/Speed_Jump_Rings_3__By_dmc/rings3.upk",
@@ -131,7 +131,7 @@
   },
   {
     "Title": "Bouncy Castle",
-    "Author": "SteamWorkshop",
+    "Author": "BatDuck",
     "Description": "A fun custom map with extra-bouncy walls and floors for chaotic gameplay.",
     "category": "fun",
     "PreviewUrl": "https://files.xplodingeggo.shop/bounce/20260529144244_1.jpg",
