@@ -511,6 +511,7 @@
     <button class="filter-btn" data-cat="fun">Fun</button>
     <button class="filter-btn" data-cat="other">Other</button>
   </div>
+  <div id="author-filters" class="filter-group"></div>
 </div>
 
 <section class="grid-section" id="maps">
@@ -594,6 +595,39 @@
 
   let allCards = [];
   let activeFilter = 'all';
+  let activeAuthors = new Set();
+
+  function renderAuthorFilters(maps) {
+  const container = document.getElementById('author-filters');
+  container.innerHTML = '';
+
+  const authors = [...new Set(
+    maps.map(m => m.Author || m.author).filter(Boolean)
+  )].sort();
+
+  authors.forEach(author => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.textContent = author;
+    btn.dataset.author = author.toLowerCase();
+
+    btn.addEventListener('click', () => {
+      const a = btn.dataset.author;
+
+      if (activeAuthors.has(a)) {
+        activeAuthors.delete(a);
+        btn.classList.remove('active');
+      } else {
+        activeAuthors.add(a);
+        btn.classList.add('active');
+      }
+
+      applyFilters();
+    });
+
+    container.appendChild(btn);
+  });
+  }
 
   function renderMaps(maps) {
     const grid = document.getElementById('grid');
@@ -601,6 +635,7 @@
     allCards = maps.map(makeCard);
     allCards.forEach(c => grid.appendChild(c));
     document.getElementById('total-maps').textContent = maps.length;
+    renderAuthorFilters(maps);
     applyFilters();
   }
 
