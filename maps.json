@@ -20,7 +20,7 @@
     "Title": "Creative Mode",
     "Author": "Ecrase-Patate",
     "Description": "Create your own maps!",
-    "Category": ["Fun", "Other"],
+    "category": ["Fun", "Other"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Creative_Mode/Creative_Mode.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Creative_Mode/CreativeMode.upk",
     "format": "upk"
@@ -29,7 +29,7 @@
     "Title": "Dribble Challenge 2 Overhaul",
     "Author": "0xDigby & Martinn",
     "Description": "An overhaul of Dribbling Challenge #2.",
-    "category": ["Training", "Dribble"]
+    "category": ["Training", "Dribble"],
     "PreviewUrl": "https://files.xplodingeggo.shop/Dribble_2_Overhaul/Dribble_2_Overhaul.jfif",
     "downloadUrl": "https://files.xplodingeggo.shop/Dribble_2_Overhaul/DribbleChallenge2Overhaul.upk",
     "format": "upk"
