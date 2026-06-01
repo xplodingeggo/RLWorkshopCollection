@@ -36,8 +36,4 @@ If a map came with a `.json` sidecar file (from the original Workshop upload), j
 
 ## ⚖️ Legal
 
-Map files belong to their original creators. This archive exists for preservation purposes only. Not affiliated with Psyonix or Epic Games.
-
-## Future additions
-i just want to maybe add like a link to the original workshop maps on steam. I forgot to do it when i was making it but oh well.
-Also just to clarify i did use AI for most of this.
+Map files belong to their original creators (credited on workshop link and map entry).
