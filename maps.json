@@ -183,5 +183,17 @@
     "downloadUrl": "https://files.xplodingeggo.space/Lucid_Rings/WhiffRings2.udk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2116244468",
     "format": "udk"
+  },
+  {
+    "Title": "Aerial Training",
+    "Author": "thanrek",
+    "Description": "A map to learn how to control your car including 12 levels to beat (and elevators !). (with FIXED SPAWN)",
+    "category": [
+      "other"
+    ],
+    "PreviewUrl": "https://files.xplodingeggo.space/Aerial_Training/preview.jpg",
+    "downloadUrl": "https://files.xplodingeggo.space/Aerial_Training/aerial.udk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=814164094",
+    "format": "udk"
   }
 ]
