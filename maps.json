@@ -195,5 +195,17 @@
     "downloadUrl": "https://files.xplodingeggo.space/Aerial_Training/aerial.udk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=814164094",
     "format": "udk"
+  },
+  {
+    "Title": "Parkour-Map #2 : It's moving!",
+    "Author": "Dreale",
+    "Description": "Just an short parkour-Map in which i played around with a lot of different Moving obstacles...Good luck and have fun! Give me Feedback on which levels you liked and disliked and why to influence future Maps ;) Map was tested and played on Lachinio-Settings, with Camera-distance g",
+    "category": [
+      "other"
+    ],
+    "PreviewUrl": "https://files.xplodingeggo.space/Parkour_Map_2_It_s_moving/preview.jpg",
+    "downloadUrl": "https://files.xplodingeggo.space/Parkour_Map_2_It_s_moving/Obstacle2.udk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=844375200",
+    "format": "udk"
   }
 ]
