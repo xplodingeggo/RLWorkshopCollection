@@ -11,6 +11,8 @@
 const JOB_TTL_SECONDS = 7 * 24 * 60 * 60;       // 7 days
 const JOB_DONE_TTL_SECONDS = 90 * 24 * 60 * 60; // 90 days once successful
 const RATE_LIMIT_BUCKET_TTL = 3600;             // 1 hour
+const MAPS_JSON_URL =
+  "https://raw.githubusercontent.com/xplodingeggo/RLWorkshopCollection/main/maps.json";
 
 function cors(env) {
   return {
@@ -61,6 +63,20 @@ function requireDaemonAuth(request, env) {
   return auth === `Bearer ${env.DAEMON_SECRET}`;
 }
 
+async function isAlreadyInCatalog(wid) {
+  // Catches maps added before this feature existed (never tracked in KV)
+  // or added manually since — stops a wasted download before it's even
+  // queued, on top of the daemon's own belt-and-braces maps.json check.
+  try {
+    const r = await fetch(MAPS_JSON_URL, { cf: { cacheTtl: 60 } });
+    if (!r.ok) return null; // fetch failed — don't block submission over it
+    const maps = await r.json();
+    return maps.find((m) => (m.steamUrl || "").includes(`id=${wid}`)) || false;
+  } catch {
+    return null; // network hiccup — fail open, daemon still catches real dupes
+  }
+}
+
 async function handleSubmit(request, env) {
   let body;
   try {
@@ -72,6 +88,14 @@ async function handleSubmit(request, env) {
   const wid = parseWorkshopId(body.input);
   if (!wid) {
     return json({ error: "invalid_workshop_id" }, env, 400);
+  }
+
+  // Check the live catalog before spending a Turnstile round-trip or
+  // touching the queue at all — covers maps added before this feature
+  // existed, or manually since, that never got a KV `submitted:` entry.
+  const catalogHit = await isAlreadyInCatalog(wid);
+  if (catalogHit) {
+    return json({ status: "duplicate", entry: catalogHit }, env);
   }
 
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
@@ -171,6 +195,36 @@ async function handleNextJob(request, env) {
   return new Response(null, { status: 204, headers: cors(env) });
 }
 
+async function handleJobs(env) {
+  // Public, persistent activity list — reflects Worker/KV state, not
+  // anything held in a visitor's browser, so it survives tab close/refresh
+  // and shows the same thing to every visitor.
+  const list = await env.MAPREQUESTS.list({ prefix: "job:" });
+  const jobs = [];
+  for (const key of list.keys) {
+    const raw = await env.MAPREQUESTS.get(key.name);
+    if (!raw) continue;
+    const job = JSON.parse(raw);
+    jobs.push({
+      jobId: key.name.slice("job:".length),
+      wid: job.wid,
+      title: job.title || null,
+      status: job.status,
+      message: job.message || null,
+      createdAt: job.createdAt,
+      updatedAt: job.updatedAt,
+    });
+  }
+  jobs.sort((a, b) => b.updatedAt - a.updatedAt);
+
+  const active = jobs.filter((j) => ["queued", "downloading", "uploading"].includes(j.status));
+  const recent = jobs
+    .filter((j) => ["done", "failed", "not_rl", "not_found"].includes(j.status))
+    .slice(0, 8);
+
+  return json({ active, recent }, env);
+}
+
 async function handleJobResult(request, env) {
   if (!requireDaemonAuth(request, env)) return json({ error: "unauthorized" }, env, 401);
 
@@ -181,7 +235,7 @@ async function handleJobResult(request, env) {
     return json({ error: "invalid_json" }, env, 400);
   }
 
-  const { jobId, status, message, entry } = body;
+  const { jobId, status, message, entry, title } = body;
   if (!jobId || !status) return json({ error: "missing_fields" }, env, 400);
 
   const raw = await env.MAPREQUESTS.get(`job:${jobId}`);
@@ -192,6 +246,7 @@ async function handleJobResult(request, env) {
   job.updatedAt = Date.now();
   if (message) job.message = message;
   if (entry) job.entry = entry;
+  if (title) job.title = title; // once known, kept even if a later update omits it
 
   const ttl = status === "done" ? JOB_DONE_TTL_SECONDS : JOB_TTL_SECONDS;
   await env.MAPREQUESTS.put(`job:${jobId}`, JSON.stringify(job), { expirationTtl: ttl });
@@ -216,6 +271,9 @@ export default {
     }
     if (request.method === "GET" && url.pathname.startsWith("/status/")) {
       return handleStatus(url.pathname.slice("/status/".length), env);
+    }
+    if (request.method === "GET" && url.pathname === "/jobs") {
+      return handleJobs(env);
     }
     if (request.method === "GET" && url.pathname === "/next-job") {
       return handleNextJob(request, env);

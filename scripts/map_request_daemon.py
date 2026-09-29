@@ -224,11 +224,17 @@ def rclone_upload(local_path: str, remote_folder: str) -> bool:
     return result.returncode == 0
 
 
-def process_job(wid: str, git_branch: str = "main") -> dict:
+def process_job(wid: str, git_branch: str = "main", report=None) -> dict:
     """Runs one full job: validate -> dedupe -> download -> upload -> commit+push.
     Returns {status, message?, entry?} matching the Worker's /job-result shape.
     status is one of: done, failed, duplicate, not_rl, not_found
-    """
+
+    `report(status, **fields)`, if given, is called for mid-flight progress
+    updates (e.g. title becoming known, status moving to uploading) so a
+    persistent site-wide activity list can show more than just "queued"."""
+    if report is None:
+        report = lambda *a, **k: None
+
     assella = load_assella_cli()
     daemon_conf = load_daemon_conf()
 
@@ -252,6 +258,7 @@ def process_job(wid: str, git_branch: str = "main") -> dict:
     preview_url = details.get("preview_url", "")
     author = resolve_persona_name(creator_steamid, daemon_conf) or creator_steamid or "Unknown"
     log(f"[{wid}] Title: {title!r}, appid={consumer_appid}, author={author!r}")
+    report("downloading", title=title)
 
     # 2. De-dupe against maps.json (belt-and-braces beyond Worker KV)
     git("fetch", "origin")
@@ -312,6 +319,7 @@ def process_job(wid: str, git_branch: str = "main") -> dict:
 
         # 6. Upload to R2
         folder = sanitize_title(title)
+        report("uploading", title=title)
         log(f"[{wid}] Uploading to R2 under files/{folder}/ ...")
         if not rclone_upload(map_file, folder):
             return {"status": "failed", "message": "R2 upload of map file failed."}
@@ -395,8 +403,15 @@ def try_one_job(base_url: str, headers: dict, git_branch: str) -> bool:
     job_id, wid = job["jobId"], job["wid"]
     log(f"Picked up job {job_id} (wid={wid})")
 
+    def report(status, **fields):
+        try:
+            requests.post(f"{base_url}/job-result", headers=headers, timeout=15,
+                          json={"jobId": job_id, "status": status, **fields})
+        except Exception as e:
+            log(f"Progress report failed (non-fatal): {e}")
+
     try:
-        result = process_job(wid, git_branch=git_branch)
+        result = process_job(wid, git_branch=git_branch, report=report)
     except Exception as e:
         log(f"process_job crashed: {e}")
         result = {"status": "failed", "message": f"daemon exception: {e}"}

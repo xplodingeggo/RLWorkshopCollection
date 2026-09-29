@@ -346,6 +346,55 @@
     .modal-status.show { display: block; }
     .modal-status.error { color: #f5867e; border-color: rgba(245,134,126,0.3); }
     .modal-status.ok { color: #7ec8a0; border-color: rgba(126,200,160,0.3); }
+
+    /* ── Activity panel (persistent, site-wide — state lives on the
+       server, so it's the same for every visitor and survives refresh) ── */
+    .activity-toggle {
+      position: fixed; right: 20px; bottom: 20px; z-index: 900;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 999px; padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+      color: var(--text2); font-family: var(--font); font-size: 13px; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35); transition: border-color 0.15s;
+    }
+    .activity-toggle:hover { border-color: var(--border-hover); color: var(--text); }
+    .activity-toggle .dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--text3);
+    }
+    .activity-toggle.active .dot {
+      background: var(--accent2);
+      box-shadow: 0 0 0 0 rgba(126,200,245,0.6);
+      animation: pulse-dot 1.6s infinite;
+    }
+    @keyframes pulse-dot {
+      0% { box-shadow: 0 0 0 0 rgba(126,200,245,0.5); }
+      70% { box-shadow: 0 0 0 7px rgba(126,200,245,0); }
+      100% { box-shadow: 0 0 0 0 rgba(126,200,245,0); }
+    }
+    .activity-panel {
+      position: fixed; right: 20px; bottom: 70px; z-index: 900;
+      width: 320px; max-height: 60vh; overflow-y: auto;
+      background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.45); padding: 1rem;
+      display: none;
+    }
+    .activity-panel.open { display: block; }
+    .activity-panel h4 {
+      font-size: 13px; font-weight: 600; color: var(--text2);
+      text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 0.6rem;
+    }
+    .activity-panel h4:not(:first-child) { margin-top: 1rem; }
+    .activity-empty { font-size: 13px; color: var(--text3); padding: 0.4rem 0; }
+    .activity-item {
+      display: flex; flex-direction: column; gap: 2px;
+      padding: 8px 10px; border-radius: 8px; background: var(--card);
+      border: 1px solid var(--border); margin-bottom: 6px; font-size: 13px;
+    }
+    .activity-item .a-title { color: var(--text); font-weight: 500; }
+    .activity-item .a-status { color: var(--text2); font-size: 12px; display: flex; align-items: center; gap: 6px; }
+    .activity-item .a-status .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .a-status.queued .dot, .a-status.downloading .dot, .a-status.uploading .dot { background: var(--accent2); }
+    .a-status.done .dot { background: #7ec8a0; }
+    .a-status.failed .dot, .a-status.not_rl .dot, .a-status.not_found .dot { background: #f5867e; }
   </style>
 </head>
 <body>
@@ -372,6 +421,17 @@
     <button class="modal-submit" id="request-submit-btn">Submit</button>
     <div class="modal-status" id="request-status"></div>
   </div>
+</div>
+
+<button class="activity-toggle" id="activity-toggle" title="Active map requests">
+  <span class="dot"></span>
+  <span id="activity-toggle-label">Requests</span>
+</button>
+<div class="activity-panel" id="activity-panel">
+  <h4>In progress</h4>
+  <div id="activity-active"><div class="activity-empty">Nothing in progress.</div></div>
+  <h4>Recent</h4>
+  <div id="activity-recent"><div class="activity-empty">Nothing yet.</div></div>
 </div>
 
 <section class="hero">
@@ -841,8 +901,15 @@
           if (window.turnstile) { try { turnstile.reset('#request-turnstile'); } catch (e) {} }
           return;
         }
+        if (data.status === 'duplicate' && !data.jobId) {
+          setStatus('This map is already on the site.', 'ok');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit';
+          return;
+        }
         setStatus(STATUS_COPY[data.status] || 'Queued…');
         pollStatus(data.jobId, Date.now());
+        refreshActivity();
       })
       .catch(() => {
         setStatus('Network error — please try again.', 'error');
@@ -850,6 +917,72 @@
         submitBtn.textContent = 'Submit';
       });
   });
+
+  // ── Persistent activity panel ───────────────────────────────
+  // Polls the Worker directly (server-side state), so it shows the same
+  // thing to every visitor and survives a tab close / refresh — nothing
+  // here depends on who submitted what.
+  const ACTIVITY_POLL_MS = 6000;
+  const activityToggleBtn = document.getElementById('activity-toggle');
+  const activityToggleLabel = document.getElementById('activity-toggle-label');
+  const activityPanel = document.getElementById('activity-panel');
+  const activityActiveEl = document.getElementById('activity-active');
+  const activityRecentEl = document.getElementById('activity-recent');
+
+  activityToggleBtn.addEventListener('click', () => {
+    activityPanel.classList.toggle('open');
+  });
+
+  const STATUS_LABELS = {
+    queued: 'Queued', downloading: 'Downloading…', uploading: 'Uploading…',
+    done: 'Added', failed: 'Failed', not_rl: 'Not a Rocket League map',
+    not_found: 'Not found',
+  };
+
+  function renderJobItem(job) {
+    const title = job.title || `Workshop item ${job.wid}`;
+    const statusLabel = STATUS_LABELS[job.status] || job.status;
+    const div = document.createElement('div');
+    div.className = 'activity-item';
+    div.innerHTML = `
+      <div class="a-title"></div>
+      <div class="a-status ${job.status}"><span class="dot"></span><span class="a-status-text"></span></div>
+    `;
+    div.querySelector('.a-title').textContent = title;
+    div.querySelector('.a-status-text').textContent = statusLabel;
+    return div;
+  }
+
+  function renderJobList(container, jobs, emptyText) {
+    container.innerHTML = '';
+    if (!jobs.length) {
+      const empty = document.createElement('div');
+      empty.className = 'activity-empty';
+      empty.textContent = emptyText;
+      container.appendChild(empty);
+      return;
+    }
+    jobs.forEach(job => container.appendChild(renderJobItem(job)));
+  }
+
+  function refreshActivity() {
+    fetch(`${WORKER_BASE_URL}/jobs`)
+      .then(r => r.json())
+      .then(data => {
+        const active = data.active || [];
+        const recent = data.recent || [];
+        renderJobList(activityActiveEl, active, 'Nothing in progress.');
+        renderJobList(activityRecentEl, recent, 'Nothing yet.');
+
+        activityToggleBtn.classList.toggle('active', active.length > 0);
+        activityToggleLabel.textContent = active.length > 0
+          ? `${active.length} in progress` : 'Requests';
+      })
+      .catch(() => { /* transient — next poll retries */ });
+  }
+
+  refreshActivity();
+  setInterval(refreshActivity, ACTIVITY_POLL_MS);
 </script>
 </body>
 </html>
