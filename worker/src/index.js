@@ -14,6 +14,8 @@ const RATE_LIMIT_BUCKET_TTL = 3600;             // 1 hour
 const MAPS_JSON_URL =
   "https://raw.githubusercontent.com/xplodingeggo/RLWorkshopCollection/main/maps.json";
 const ALLOWED_CATEGORIES = new Set(["training", "dribble", "parkour", "fun", "other"]);
+const ADMIN_SESSION_TTL_SECONDS = 24 * 60 * 60; // 24 hours
+const GITHUB_REPO = "xplodingeggo/RLWorkshopCollection";
 
 function cors(env) {
   return {
@@ -257,6 +259,132 @@ async function handleJobs(env) {
   return json({ active, recent }, env);
 }
 
+function timingSafeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+async function handleAdminLogin(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "invalid_json" }, env, 400);
+  }
+
+  // Per-IP brute-force guard, same coarse hour-bucket pattern as /submit.
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const ipHash = await hashIp(ip);
+  const hourBucket = new Date().toISOString().slice(0, 13).replace(/[-T:]/g, "");
+  const rlKey = `admin_rl:${ipHash}:${hourBucket}`;
+  const current = parseInt((await env.MAPREQUESTS.get(rlKey)) || "0", 10);
+  if (current >= 10) {
+    return json({ error: "rate_limited" }, env, 429);
+  }
+  await env.MAPREQUESTS.put(rlKey, String(current + 1), { expirationTtl: RATE_LIMIT_BUCKET_TTL });
+
+  const password = String(body.password || "");
+  if (!env.ADMIN_PASSWORD || !timingSafeEqual(password, env.ADMIN_PASSWORD)) {
+    return json({ error: "invalid_password" }, env, 401);
+  }
+
+  const token = crypto.randomUUID();
+  await env.MAPREQUESTS.put(`admin_session:${token}`, String(Date.now()), {
+    expirationTtl: ADMIN_SESSION_TTL_SECONDS,
+  });
+  return json({ token }, env);
+}
+
+async function requireAdminAuth(request, env) {
+  const auth = request.headers.get("Authorization") || "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  if (!token) return false;
+  const raw = await env.MAPREQUESTS.get(`admin_session:${token}`);
+  return raw !== null;
+}
+
+async function handleAdminVerify(request, env) {
+  const ok = await requireAdminAuth(request, env);
+  return json({ ok }, env, ok ? 200 : 401);
+}
+
+async function githubGetMapsJson(env) {
+  const r = await fetch(
+    `https://api.github.com/repos/${GITHUB_REPO}/contents/maps.json?ref=main`,
+    {
+      headers: {
+        Authorization: `Bearer ${env.GITHUB_DISPATCH_TOKEN}`,
+        "User-Agent": "rlworkshop-maprequest-worker",
+        Accept: "application/vnd.github+json",
+      },
+    }
+  );
+  if (!r.ok) throw new Error(`GitHub contents GET failed: ${r.status}`);
+  const data = await r.json();
+  const content = JSON.parse(atob(data.content.replace(/\n/g, "")));
+  return { content, sha: data.sha };
+}
+
+async function githubPutMapsJson(env, maps, sha, message) {
+  const body = JSON.stringify(maps, null, 2) + "\n";
+  const contentB64 = btoa(unescape(encodeURIComponent(body)));
+  const r = await fetch(
+    `https://api.github.com/repos/${GITHUB_REPO}/contents/maps.json`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${env.GITHUB_DISPATCH_TOKEN}`,
+        "User-Agent": "rlworkshop-maprequest-worker",
+        Accept: "application/vnd.github+json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message,
+        content: contentB64,
+        sha,
+        branch: "main",
+        committer: { name: "xplodingeggo", email: "89659772+xplodingeggo@users.noreply.github.com" },
+      }),
+    }
+  );
+  if (!r.ok) {
+    const errText = await r.text();
+    throw new Error(`GitHub contents PUT failed: ${r.status} ${errText.slice(0, 300)}`);
+  }
+}
+
+async function handleAdminUpdateTags(request, env) {
+  if (!(await requireAdminAuth(request, env))) return json({ error: "unauthorized" }, env, 401);
+  if (!env.GITHUB_DISPATCH_TOKEN) return json({ error: "server_not_configured" }, env, 500);
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "invalid_json" }, env, 400);
+  }
+
+  const { steamUrl, categories } = body;
+  if (!steamUrl || !Array.isArray(categories)) {
+    return json({ error: "missing_fields" }, env, 400);
+  }
+  const cleanCategories = [...new Set(categories.filter((c) => ALLOWED_CATEGORIES.has(c)))];
+
+  try {
+    const { content: maps, sha } = await githubGetMapsJson(env);
+    const entry = maps.find((m) => m.steamUrl === steamUrl);
+    if (!entry) return json({ error: "not_found" }, env, 404);
+
+    entry.category = cleanCategories;
+    await githubPutMapsJson(env, maps, sha, `Update tags for ${entry.Title} via admin panel`);
+    return json({ ok: true, entry }, env);
+  } catch (e) {
+    return json({ error: "github_update_failed", message: String(e).slice(0, 300) }, env, 502);
+  }
+}
+
 async function handleJobResult(request, env) {
   if (!requireDaemonAuth(request, env)) return json({ error: "unauthorized" }, env, 401);
 
@@ -312,6 +440,15 @@ export default {
     }
     if (request.method === "POST" && url.pathname === "/job-result") {
       return handleJobResult(request, env);
+    }
+    if (request.method === "POST" && url.pathname === "/admin/login") {
+      return handleAdminLogin(request, env);
+    }
+    if (request.method === "GET" && url.pathname === "/admin/verify") {
+      return handleAdminVerify(request, env);
+    }
+    if (request.method === "POST" && url.pathname === "/admin/update-tags") {
+      return handleAdminUpdateTags(request, env);
     }
 
     return json({ error: "not_found" }, env, 404);

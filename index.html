@@ -296,6 +296,18 @@
     footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--text3); font-size: 13px; }
     footer a { color: var(--text2); text-decoration: none; }
     footer a:hover { color: var(--accent); }
+    .admin-link { background: none; border: none; color: var(--text3); font-family: var(--font); font-size: 13px; cursor: pointer; text-decoration: none; }
+    .admin-link:hover { color: var(--accent); }
+
+    /* ── Admin: tag edit button + login/edit modals ── */
+    .tag-edit-btn {
+      display: none; background: var(--card); border: 1px solid var(--border);
+      color: var(--text2); border-radius: 6px; width: 22px; height: 22px;
+      align-items: center; justify-content: center; cursor: pointer; font-size: 12px;
+      margin-left: 2px;
+    }
+    .tag-edit-btn:hover { border-color: var(--border-hover); color: var(--text); }
+    body.admin-mode .tag-edit-btn { display: inline-flex; }
 
     /* ── Request Map modal ── */
     .btn-request {
@@ -522,8 +534,34 @@
 </section>
 
 <footer>
-  <p>RL Workshop Collection — Not affiliated with Psyonix or Epic Games. &nbsp;·&nbsp; <a href="https://github.com/xplodingeggo/RLWorkshopCollection">GitHub</a></p>
+  <p>RL Workshop Collection — Not affiliated with Psyonix or Epic Games. &nbsp;·&nbsp; <a href="https://github.com/xplodingeggo/RLWorkshopCollection">GitHub</a> &nbsp;·&nbsp; <button class="admin-link" id="admin-link">Admin</button></p>
 </footer>
+
+<div class="modal-overlay" id="admin-login-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="admin-login-close" aria-label="Close">✕</button>
+    <h3>Admin Login</h3>
+    <input type="password" id="admin-password-input" placeholder="Password" autocomplete="current-password" />
+    <button class="modal-submit" id="admin-login-submit">Log in</button>
+    <div class="modal-status" id="admin-login-status"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="admin-edit-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="admin-edit-close" aria-label="Close">✕</button>
+    <h3 id="admin-edit-title">Edit Tags</h3>
+    <div class="tag-picker" id="admin-edit-tags">
+      <label><input type="checkbox" value="training"> Training</label>
+      <label><input type="checkbox" value="dribble"> Dribble</label>
+      <label><input type="checkbox" value="parkour"> Parkour</label>
+      <label><input type="checkbox" value="fun"> Fun</label>
+      <label><input type="checkbox" value="other"> Other</label>
+    </div>
+    <button class="modal-submit" id="admin-edit-save">Save</button>
+    <div class="modal-status" id="admin-edit-status"></div>
+  </div>
+</div>
 
 <script>
   // ── Category helpers ─────────────────────────────────────
@@ -567,8 +605,10 @@
     card.dataset.cats   = JSON.stringify(cats);
     card.dataset.title  = title.toLowerCase();
     card.dataset.author = author.toLowerCase();
+    card.dataset.steamurl = steamUrl;
 
-    const tagsHtml = cats.map(c => `<span class="tag ${c}">${c}</span>`).join('');
+    const tagsHtml = cats.map(c => `<span class="tag ${c}">${c}</span>`).join('')
+      + (steamUrl ? `<button class="tag-edit-btn" data-steamurl="${steamUrl}" data-title="${title.replace(/"/g, '&quot;')}" title="Edit tags (admin)">✎</button>` : '');
 
     const steamHtml = steamUrl
       ? `<a class="btn-steam" href="${steamUrl}" target="_blank" rel="noopener" title="View on Steam Workshop">
@@ -1007,6 +1047,147 @@
 
   refreshActivity();
   setInterval(refreshActivity, ACTIVITY_POLL_MS);
+
+  // ── Admin: login + inline tag editing ───────────────────────
+  const ADMIN_TOKEN_KEY = 'rlwc_admin_token';
+  let adminToken = null;
+
+  const adminLink = document.getElementById('admin-link');
+  const adminLoginModal = document.getElementById('admin-login-modal');
+  const adminLoginClose = document.getElementById('admin-login-close');
+  const adminPasswordInput = document.getElementById('admin-password-input');
+  const adminLoginSubmit = document.getElementById('admin-login-submit');
+  const adminLoginStatus = document.getElementById('admin-login-status');
+
+  const adminEditModal = document.getElementById('admin-edit-modal');
+  const adminEditClose = document.getElementById('admin-edit-close');
+  const adminEditTitle = document.getElementById('admin-edit-title');
+  const adminEditTagsEl = document.getElementById('admin-edit-tags');
+  const adminEditSave = document.getElementById('admin-edit-save');
+  const adminEditStatus = document.getElementById('admin-edit-status');
+  let editingSteamUrl = null;
+
+  function setAdminMode(on) {
+    document.body.classList.toggle('admin-mode', on);
+    adminLink.textContent = on ? 'Admin ✓ (logout)' : 'Admin';
+  }
+
+  function checkAdminSession() {
+    const saved = localStorage.getItem(ADMIN_TOKEN_KEY);
+    if (!saved) return;
+    fetch(`${WORKER_BASE_URL}/admin/verify`, { headers: { Authorization: `Bearer ${saved}` } })
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok) { adminToken = saved; setAdminMode(true); }
+        else { localStorage.removeItem(ADMIN_TOKEN_KEY); }
+      })
+      .catch(() => {});
+  }
+  checkAdminSession();
+
+  adminLink.addEventListener('click', () => {
+    if (adminToken) {
+      adminToken = null;
+      localStorage.removeItem(ADMIN_TOKEN_KEY);
+      setAdminMode(false);
+      return;
+    }
+    adminPasswordInput.value = '';
+    adminLoginStatus.className = 'modal-status';
+    adminLoginModal.classList.add('open');
+    adminPasswordInput.focus();
+  });
+  adminLoginClose.addEventListener('click', () => adminLoginModal.classList.remove('open'));
+  adminLoginModal.addEventListener('click', e => { if (e.target === adminLoginModal) adminLoginModal.classList.remove('open'); });
+
+  function doAdminLogin() {
+    const password = adminPasswordInput.value;
+    if (!password) return;
+    adminLoginSubmit.disabled = true;
+    fetch(`${WORKER_BASE_URL}/admin/login`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        adminLoginSubmit.disabled = false;
+        if (data.token) {
+          adminToken = data.token;
+          localStorage.setItem(ADMIN_TOKEN_KEY, data.token);
+          setAdminMode(true);
+          adminLoginModal.classList.remove('open');
+        } else {
+          adminLoginStatus.textContent = data.error === 'rate_limited'
+            ? 'Too many attempts — try again later.' : 'Wrong password.';
+          adminLoginStatus.className = 'modal-status show error';
+        }
+      })
+      .catch(() => {
+        adminLoginSubmit.disabled = false;
+        adminLoginStatus.textContent = 'Network error.';
+        adminLoginStatus.className = 'modal-status show error';
+      });
+  }
+  adminLoginSubmit.addEventListener('click', doAdminLogin);
+  adminPasswordInput.addEventListener('keydown', e => { if (e.key === 'Enter') doAdminLogin(); });
+
+  // Delegated click handler — cards are re-rendered on refresh, so this
+  // must not be bound to elements that get replaced.
+  document.getElementById('grid').addEventListener('click', e => {
+    const btn = e.target.closest('.tag-edit-btn');
+    if (!btn || !adminToken) return;
+    editingSteamUrl = btn.dataset.steamurl;
+    adminEditTitle.textContent = `Edit Tags — ${btn.dataset.title}`;
+    const card = btn.closest('.map-card');
+    const currentCats = card ? JSON.parse(card.dataset.cats || '[]') : [];
+    adminEditTagsEl.querySelectorAll('input').forEach(el => {
+      el.checked = currentCats.includes(el.value);
+    });
+    adminEditStatus.className = 'modal-status';
+    adminEditModal.classList.add('open');
+  });
+  adminEditClose.addEventListener('click', () => adminEditModal.classList.remove('open'));
+  adminEditModal.addEventListener('click', e => { if (e.target === adminEditModal) adminEditModal.classList.remove('open'); });
+
+  adminEditSave.addEventListener('click', () => {
+    if (!editingSteamUrl || !adminToken) return;
+    const categories = Array.from(adminEditTagsEl.querySelectorAll('input:checked')).map(el => el.value);
+    adminEditSave.disabled = true;
+    adminEditStatus.textContent = 'Saving…';
+    adminEditStatus.className = 'modal-status show';
+
+    fetch(`${WORKER_BASE_URL}/admin/update-tags`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ steamUrl: editingSteamUrl, categories }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        adminEditSave.disabled = false;
+        if (data.ok) {
+          adminEditStatus.textContent = 'Saved.';
+          adminEditStatus.className = 'modal-status show ok';
+          setTimeout(() => {
+            adminEditModal.classList.remove('open');
+            fetch('maps.json?t=' + Date.now()).then(r => r.json()).then(renderMaps);
+          }, 500);
+        } else if (data.error === 'unauthorized') {
+          adminToken = null;
+          localStorage.removeItem(ADMIN_TOKEN_KEY);
+          setAdminMode(false);
+          adminEditStatus.textContent = 'Session expired — log in again.';
+          adminEditStatus.className = 'modal-status show error';
+        } else {
+          adminEditStatus.textContent = 'Error: ' + (data.message || data.error || 'unknown');
+          adminEditStatus.className = 'modal-status show error';
+        }
+      })
+      .catch(() => {
+        adminEditSave.disabled = false;
+        adminEditStatus.textContent = 'Network error.';
+        adminEditStatus.className = 'modal-status show error';
+      });
+  });
 </script>
 </body>
 </html>
