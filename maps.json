@@ -294,6 +294,7 @@
     "Author": "dmc",
     "Description": "An obstacle course. Difficulty: Extreme Note: To eliminate flickering - Turn off Ambient Occlusion in video settings. ~~~~~~~~~~~~~~~~~~ Map list: Noob Dribble - https://steamcommunity.com/sharedfiles/filedetails/?id=1843822064 Hornets Nest - https://steamcommunity.com/sharedfile",
     "category": [
+      "training",
       "parkour"
     ],
     "PreviewUrl": "https://files.xplodingeggo.space/Speed_Jump_Boost_By_dmc/preview.jpg",
