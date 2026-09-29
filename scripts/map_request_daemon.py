@@ -30,7 +30,7 @@ import time
 REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MAPS_JSON = os.path.join(REPO_DIR, "maps.json")
 NO_PREVIEW_FALLBACK = os.path.join(REPO_DIR, "no-preview.png")
-ASSELLA_CLI_PATH = os.path.expanduser("~/ASSella_cli.py")
+ASSELLA_CLI_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assella_cli.py")
 DAEMON_CONF_PATH = os.path.expanduser("~/.config/hebnix-linux-dev/map-daemon.env")
 RL_APPID = "252950"
 STEAM_PUBLISHED_FILE_DETAILS_URL = (
@@ -45,9 +45,18 @@ def load_assella_cli():
     return mod
 
 
+DAEMON_CONF_KEYS = (
+    "DAEMON_SECRET", "WORKER_BASE_URL", "MORRENUS_API_KEY",
+    "STEAM_API_KEY", "DDM_DLL_PATH",
+)
+
+
 def load_daemon_conf():
     """Simple `KEY=value` env-style file, same shape as r2-credentials.env
-    but without `export`/shell semantics since we just need key/value pairs."""
+    but without `export`/shell semantics since we just need key/value pairs.
+    Real environment variables (as set by GitHub Actions secrets in CI)
+    take priority over the file, so the same code works unmodified locally
+    (file-based) and in CI (env-var-based, no file present)."""
     conf = {}
     if os.path.exists(DAEMON_CONF_PATH):
         with open(DAEMON_CONF_PATH, encoding="utf-8") as f:
@@ -59,6 +68,9 @@ def load_daemon_conf():
                 if "=" in line:
                     k, v = line.split("=", 1)
                     conf[k.strip()] = v.strip().strip('"').strip("'")
+    for key in DAEMON_CONF_KEYS:
+        if os.environ.get(key):
+            conf[key] = os.environ[key]
     return conf
 
 
@@ -248,7 +260,11 @@ def process_job(wid: str, git_branch: str = "main") -> dict:
         return {"status": "failed", "message": "No morrenus API key configured."}
 
     max_downloads = int(conf.get("workshop_max_downloads", 4) or 4)
-    ddm_dll = assella.ensure_deps()
+    # In CI (GitHub Actions), DepotDownloaderMod is built fresh from its own
+    # public source (SteamAutoCracks/DepotDownloaderMod) and the path is
+    # passed in via env var — there's no local ASSella AppImage to extract
+    # from there. Locally, fall back to the usual AppImage-extraction cache.
+    ddm_dll = daemon_conf.get("DDM_DLL_PATH") or assella.ensure_deps()
 
     with tempfile.TemporaryDirectory(prefix="map_request_") as scratch:
         log(f"[{wid}] Downloading...")
@@ -338,51 +354,72 @@ def process_job(wid: str, git_branch: str = "main") -> dict:
 POLL_INTERVAL_SECONDS = 20
 
 
-def run_poll_loop(git_branch: str):
-    import requests
-
+def _worker_auth():
     conf = load_daemon_conf()
     base_url = conf.get("WORKER_BASE_URL", "").rstrip("/")
     secret = conf.get("DAEMON_SECRET", "")
     if not base_url or not secret:
-        sys.exit(f"WORKER_BASE_URL and DAEMON_SECRET must be set in {DAEMON_CONF_PATH}")
+        sys.exit(f"WORKER_BASE_URL and DAEMON_SECRET must be set "
+                  f"(in {DAEMON_CONF_PATH} or as env vars).")
+    return base_url, {"Authorization": f"Bearer {secret}"}
 
-    headers = {"Authorization": f"Bearer {secret}"}
+
+def try_one_job(base_url: str, headers: dict, git_branch: str) -> bool:
+    """Claims and processes at most one queued job. Returns True if a job
+    was found (processed or not), False if the queue was empty."""
+    import requests
+
+    try:
+        r = requests.get(f"{base_url}/next-job", headers=headers, timeout=15)
+    except Exception as e:
+        log(f"Poll failed: {e}")
+        return False
+
+    if r.status_code == 204:
+        return False
+    if r.status_code != 200:
+        log(f"Unexpected /next-job response: {r.status_code} {r.text[:200]}")
+        return False
+
+    job = r.json()
+    job_id, wid = job["jobId"], job["wid"]
+    log(f"Picked up job {job_id} (wid={wid})")
+
+    try:
+        result = process_job(wid, git_branch=git_branch)
+    except Exception as e:
+        log(f"process_job crashed: {e}")
+        result = {"status": "failed", "message": f"daemon exception: {e}"}
+
+    try:
+        requests.post(f"{base_url}/job-result", headers=headers, timeout=15,
+                      json={"jobId": job_id, **result})
+    except Exception as e:
+        log(f"Failed to report job result: {e}")
+
+    return True
+
+
+def run_poll_loop(git_branch: str):
+    base_url, headers = _worker_auth()
     log(f"Polling {base_url} every {POLL_INTERVAL_SECONDS}s...")
-
     while True:
-        try:
-            r = requests.get(f"{base_url}/next-job", headers=headers, timeout=15)
-        except Exception as e:
-            log(f"Poll failed: {e}")
+        found = try_one_job(base_url, headers, git_branch)
+        if not found:
             time.sleep(POLL_INTERVAL_SECONDS)
-            continue
+        # If a job was found, loop immediately to check for another.
 
-        if r.status_code == 204:
-            time.sleep(POLL_INTERVAL_SECONDS)
-            continue
-        if r.status_code != 200:
-            log(f"Unexpected /next-job response: {r.status_code} {r.text[:200]}")
-            time.sleep(POLL_INTERVAL_SECONDS)
-            continue
 
-        job = r.json()
-        job_id, wid = job["jobId"], job["wid"]
-        log(f"Picked up job {job_id} (wid={wid})")
-
-        try:
-            result = process_job(wid, git_branch=git_branch)
-        except Exception as e:
-            log(f"process_job crashed: {e}")
-            result = {"status": "failed", "message": f"daemon exception: {e}"}
-
-        try:
-            requests.post(f"{base_url}/job-result", headers=headers, timeout=15,
-                          json={"jobId": job_id, **result})
-        except Exception as e:
-            log(f"Failed to report job result: {e}")
-
-        # No sleep here — immediately check for another queued job.
+def run_once(git_branch: str):
+    """Drains the current queue (one job at a time) then exits — the mode
+    used by the GitHub Actions workflow, which runs on a schedule instead
+    of staying resident."""
+    base_url, headers = _worker_auth()
+    log(f"Draining queue at {base_url} (single CI run)...")
+    processed = 0
+    while try_one_job(base_url, headers, git_branch):
+        processed += 1
+    log(f"Done. Processed {processed} job(s).")
 
 
 def main():
@@ -390,11 +427,18 @@ def main():
     ap.add_argument("--test-wid", help="Run one job standalone, no Worker involved.")
     ap.add_argument("--branch", default="main",
                      help="Git branch to commit/push to (use a test branch for --test-wid).")
+    ap.add_argument("--once", action="store_true",
+                     help="Drain the current queue once and exit (for CI), "
+                          "instead of polling forever.")
     args = ap.parse_args()
 
     if args.test_wid:
         result = process_job(args.test_wid, git_branch=args.branch)
         print(json.dumps(result, indent=2))
+        return
+
+    if args.once:
+        run_once(git_branch=args.branch)
         return
 
     run_poll_loop(git_branch=args.branch)

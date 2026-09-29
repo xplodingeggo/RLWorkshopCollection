@@ -1,0 +1,81 @@
+name: Map Request Daemon
+
+# Drains the Cloudflare Worker's job queue (worker/) on a schedule instead
+# of a permanently-running process. See scripts/map_request_daemon.py and
+# ~/.claude/plans/federated-hugging-puddle.md for the full design.
+#
+# DepotDownloaderMod is fetched fresh from its own upstream public release
+# (SteamAutoCracks/DepotDownloaderMod, GPL-2.0) each run — not extracted
+# from any local/third-party app bundle.
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: map-request-daemon
+  cancel-in-progress: false
+
+jobs:
+  drain-queue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Cache DepotDownloaderMod
+        id: cache-ddm
+        uses: actions/cache@v4
+        with:
+          path: ddm
+          key: ddm-release-v1
+
+      - name: Fetch DepotDownloaderMod release
+        if: steps.cache-ddm.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ddm
+          gh release download --repo SteamAutoCracks/DepotDownloaderMod \
+            --pattern "Release.rar" -D ddm
+          sudo apt-get update -qq && sudo apt-get install -y -qq unrar
+          unrar x -y ddm/Release.rar ddm/
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Install rclone
+        run: curl https://rclone.org/install.sh | sudo bash
+
+      - name: Configure rclone R2 remote
+        run: |
+          mkdir -p ~/.config/rclone
+          cat > ~/.config/rclone/rclone.conf <<EOF
+          [r2]
+          type = s3
+          provider = Cloudflare
+          access_key_id = ${{ secrets.R2_ACCESS_KEY_ID }}
+          secret_access_key = ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          endpoint = https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          EOF
+
+      - name: Configure git identity
+        run: |
+          git config user.name "xplodingeggo"
+          git config user.email "89659772+xplodingeggo@users.noreply.github.com"
+
+      - name: Run daemon (drain queue once)
+        env:
+          WORKER_BASE_URL: ${{ secrets.WORKER_BASE_URL }}
+          DAEMON_SECRET: ${{ secrets.DAEMON_SECRET }}
+          MORRENUS_API_KEY: ${{ secrets.MORRENUS_API_KEY }}
+          STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
+          DDM_DLL_PATH: ${{ github.workspace }}/ddm/Release/net9.0/DepotDownloaderMod.dll
+        run: python3 scripts/map_request_daemon.py --once --branch main
