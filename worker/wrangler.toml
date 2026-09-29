@@ -1,0 +1,20 @@
+name = "rlworkshop-maprequest"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+# `wrangler kv namespace create MAPREQUESTS` prints the id to fill in here.
+kv_namespaces = [
+  { binding = "MAPREQUESTS", id = "da42b6040d8b4f10b1dccbfc4075e92c" }
+]
+
+# Secrets (set via `wrangler secret put <NAME>`, never committed):
+#   DAEMON_SECRET      - shared bearer token the local daemon uses for
+#                         /next-job and /job-result
+#   TURNSTILE_SECRET   - Cloudflare Turnstile secret key for server-side
+#                         verification of submissions
+#
+# Vars (safe to keep here, not secret):
+[vars]
+ALLOWED_ORIGIN = "https://xplodingeggo.github.io"
+RL_APPID = "252950"
+RATE_LIMIT_PER_HOUR = "5"
