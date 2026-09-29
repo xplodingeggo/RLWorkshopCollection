@@ -297,11 +297,18 @@
     footer a { color: var(--text2); text-decoration: none; }
     footer a:hover { color: var(--accent); }
     .admin-link {
+      display: none; /* revealed only after the Konami code */
       background: none; border: 1px solid var(--border); border-radius: 999px;
       color: var(--text2); font-family: var(--font); font-size: 12px; cursor: pointer;
       text-decoration: none; padding: 4px 12px;
     }
     .admin-link:hover { color: var(--accent); border-color: var(--border-hover); }
+    body.konami-unlocked .admin-link { display: inline-block; animation: admin-reveal 0.4s ease; }
+    @keyframes admin-reveal {
+      0% { opacity: 0; transform: scale(0.7); }
+      60% { opacity: 1; transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
 
     /* ── Admin: tag edit button + login/edit modals ── */
     .tag-edit-btn {
@@ -1053,6 +1060,43 @@
   refreshActivity();
   setInterval(refreshActivity, ACTIVITY_POLL_MS);
 
+  // ── Konami code: reveals the Admin button ───────────────────
+  const KONAMI_KEY = 'rlwc_konami_unlocked';
+  const KONAMI_SEQUENCE = [
+    'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+    'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+    'b', 'a',
+  ];
+  let konamiProgress = 0;
+
+  function unlockKonami() {
+    document.body.classList.add('konami-unlocked');
+    sessionStorage.setItem(KONAMI_KEY, '1');
+  }
+
+  if (sessionStorage.getItem(KONAMI_KEY) === '1') {
+    document.body.classList.add('konami-unlocked');
+  }
+
+  document.addEventListener('keydown', (e) => {
+    // Ignore while typing in an input/textarea so normal typing doesn't
+    // accidentally trip it (or get eaten by it).
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea') return;
+
+    const expected = KONAMI_SEQUENCE[konamiProgress];
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (key === expected) {
+      konamiProgress++;
+      if (konamiProgress === KONAMI_SEQUENCE.length) {
+        konamiProgress = 0;
+        unlockKonami();
+      }
+    } else {
+      konamiProgress = (key === KONAMI_SEQUENCE[0]) ? 1 : 0;
+    }
+  });
+
   // ── Admin: login + inline tag editing ───────────────────────
   const ADMIN_TOKEN_KEY = 'rlwc_admin_token';
   let adminToken = null;
@@ -1083,7 +1127,7 @@
     fetch(`${WORKER_BASE_URL}/admin/verify`, { headers: { Authorization: `Bearer ${saved}` } })
       .then(r => r.json())
       .then(data => {
-        if (data.ok) { adminToken = saved; setAdminMode(true); }
+        if (data.ok) { adminToken = saved; setAdminMode(true); unlockKonami(); }
         else { localStorage.removeItem(ADMIN_TOKEN_KEY); }
       })
       .catch(() => {});
