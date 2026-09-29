@@ -301,5 +301,18 @@
     "downloadUrl": "https://files.xplodingeggo.space/Speed_Jump_Boost_By_dmc/sjb.udk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1421195368",
     "format": "udk"
+  },
+  {
+    "Title": "Dribble Challenge E.Leclerc x Vitality",
+    "Author": "gidek",
+    "Description": "Du 06 au 20 Juin la map \u00e9tait pr\u00e9sente dans 220 magasins E.Leclerc dans toute la France ! 10 Participants ont \u00e9t\u00e9 selectionn\u00e9s et se rejoindront \u00e0 V.Hive pour la finale le 04 Juillet prochain. Tu souhaites les rejoindre et tu n'as pas pu tester la map en magasins ? E.Leclerc et T",
+    "category": [
+      "training",
+      "dribble"
+    ],
+    "PreviewUrl": "https://files.xplodingeggo.space/Dribble_Challenge_E_Leclerc_x_Vitality/preview.png",
+    "downloadUrl": "https://files.xplodingeggo.space/Dribble_Challenge_E_Leclerc_x_Vitality/LC_Dribble.udk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3749624402",
+    "format": "udk"
   }
 ]
