@@ -23,7 +23,10 @@
     "Title": "Creative Mode",
     "Author": "Ecrase-Patate",
     "Description": "Create your own maps!",
-    "category": ["fun", "other"],
+    "category": [
+      "fun",
+      "other"
+    ],
     "PreviewUrl": "https://files.xplodingeggo.space/Creative_Mode/Creative_Mode.jfif",
     "downloadUrl": "https://files.xplodingeggo.space/Creative_Mode/CreativeMode.upk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3615620898",
@@ -33,7 +36,10 @@
     "Title": "Dribble 2 Overhaul",
     "Author": "0xDigby & Martinn",
     "Description": "An overhaul of Dribbling Challenge #2.",
-    "category": ["training", "dribble"],
+    "category": [
+      "training",
+      "dribble"
+    ],
     "PreviewUrl": "https://files.xplodingeggo.space/Dribble_2_Overhaul/Dribble_2_Overhaul.jfif",
     "downloadUrl": "https://files.xplodingeggo.space/Dribble_2_Overhaul/DribbleChallenge2Overhaul.upk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1694288506",
@@ -63,7 +69,10 @@
     "Title": "Speed Jump Trials 1",
     "Author": "dmc",
     "Description": "An Obstacle Course. Difficulty: Easy",
-    "category": ["training", "parkour"],
+    "category": [
+      "training",
+      "parkour"
+    ],
     "PreviewUrl": "https://files.xplodingeggo.space/Speed_Jump_Trials_1/Speed_Jump_Trials_1.jfif",
     "downloadUrl": "https://files.xplodingeggo.space/Speed_Jump_Trials_1/speedjumptrail1.upk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1578331091",
@@ -73,7 +82,10 @@
     "Title": "Speed Jump Trial 2",
     "Author": "dmc",
     "Description": "An obstacle course. Difficulty: Intermediate - Hard",
-    "category": ["training", "parkour"],
+    "category": [
+      "training",
+      "parkour"
+    ],
     "PreviewUrl": "https://files.xplodingeggo.space/Speed_Jump_Trials_2/Speed_Jump_Trials_2.jfif",
     "downloadUrl": "https://files.xplodingeggo.space/Speed_Jump_Trials_2/speedjumptrial2.upk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1581379736",
@@ -83,7 +95,10 @@
     "Title": "Speed Trials 3",
     "Author": "dmc",
     "Description": "An Obstacle Course. Difficulty: Easy",
-    "category": ["training", "parkour"],
+    "category": [
+      "training",
+      "parkour"
+    ],
     "PreviewUrl": "https://files.xplodingeggo.space/Speed_Jump_Trials_3/Speed_Jump_Trials_3.jfif",
     "downloadUrl": "https://files.xplodingeggo.space/Speed_Jump_Trials_3/speedtrail3.upk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1759763738",
@@ -93,7 +108,10 @@
     "Title": "Speed Trials 4",
     "Author": "dmc",
     "Description": "An Obstacle Course. Difficulty: Easy",
-    "category": ["training", "parkour"],
+    "category": [
+      "training",
+      "parkour"
+    ],
     "PreviewUrl": "https://files.xplodingeggo.space/Speed_Jump_Trials_4/Speed_Jump_Trials_4.jfif",
     "downloadUrl": "https://files.xplodingeggo.space/Speed_Jump_Trials_4/speedtrial4.upk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1763596534",
@@ -103,7 +121,10 @@
     "Title": "Speed Jump Rings 3",
     "Author": "dmc",
     "Description": "An obstacle course. Difficulty: Intermediate - Hard",
-    "category": ["training", "parkour"],
+    "category": [
+      "training",
+      "parkour"
+    ],
     "PreviewUrl": "https://files.xplodingeggo.space/Speed_Jump_Rings_3__By_dmc/Speed_Jump_Rings_3__By_dmc.jfif",
     "downloadUrl": "https://files.xplodingeggo.space/Speed_Jump_Rings_3__By_dmc/rings3.upk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1671658424",
@@ -138,5 +159,15 @@
     "downloadUrl": "https://files.xplodingeggo.space/bounce/bouncycastle.upk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1127376287",
     "format": "upk"
+  },
+  {
+    "Title": "Minute 2 Win It",
+    "Author": "76561199047025013",
+    "Description": "",
+    "category": [],
+    "PreviewUrl": "https://files.xplodingeggo.space/Minute_2_Win_It/Minute-to-win-it-2.jpg",
+    "downloadUrl": "https://files.xplodingeggo.space/Minute_2_Win_It/Minute_2_Win_It_v2.udk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3788668348",
+    "format": "udk"
   }
 ]
