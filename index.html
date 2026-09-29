@@ -296,8 +296,12 @@
     footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--text3); font-size: 13px; }
     footer a { color: var(--text2); text-decoration: none; }
     footer a:hover { color: var(--accent); }
-    .admin-link { background: none; border: none; color: var(--text3); font-family: var(--font); font-size: 13px; cursor: pointer; text-decoration: none; }
-    .admin-link:hover { color: var(--accent); }
+    .admin-link {
+      background: none; border: 1px solid var(--border); border-radius: 999px;
+      color: var(--text2); font-family: var(--font); font-size: 12px; cursor: pointer;
+      text-decoration: none; padding: 4px 12px;
+    }
+    .admin-link:hover { color: var(--accent); border-color: var(--border-hover); }
 
     /* ── Admin: tag edit button + login/edit modals ── */
     .tag-edit-btn {
@@ -431,6 +435,7 @@
     <a href="https://github.com/xplodingeggo/RLWorkshopCollection" target="_blank" rel="noopener">GitHub</a>
     <button class="btn-request" id="request-map-btn">Request a Map</button>
     <a href="https://github.com/xplodingeggo/RLWorkshopCollection#-adding-a-map" class="btn-contribute">+ Submit Map</a>
+    <button class="admin-link" id="admin-link">Admin</button>
   </nav>
 </header>
 
@@ -534,7 +539,7 @@
 </section>
 
 <footer>
-  <p>RL Workshop Collection — Not affiliated with Psyonix or Epic Games. &nbsp;·&nbsp; <a href="https://github.com/xplodingeggo/RLWorkshopCollection">GitHub</a> &nbsp;·&nbsp; <button class="admin-link" id="admin-link">Admin</button></p>
+  <p>RL Workshop Collection — Not affiliated with Psyonix or Epic Games. &nbsp;·&nbsp; <a href="https://github.com/xplodingeggo/RLWorkshopCollection">GitHub</a></p>
 </footer>
 
 <div class="modal-overlay" id="admin-login-modal">
