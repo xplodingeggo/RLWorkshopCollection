@@ -248,5 +248,17 @@
     "downloadUrl": "https://files.xplodingeggo.space/Obstacle_Course_2_v1_1/ObstacleChallenge2.udk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=828803580",
     "format": "udk"
+  },
+  {
+    "Title": "Speed Jump 2 - By dmc",
+    "Author": "dmc",
+    "Description": "An obstacle course. Difficulty: Intermediate - Hard ~~~~~~~~~~~~~~~~~~ Map list: Noob Dribble - https://steamcommunity.com/sharedfiles/filedetails/?id=1843822064 Hornets Nest - https://steamcommunity.com/sharedfiles/filedetails/?id=1827631206 Mean Puss Skatepark - https://steamco",
+    "category": [
+      "parkour"
+    ],
+    "PreviewUrl": "https://files.xplodingeggo.space/Speed_Jump_2_By_dmc/preview.png",
+    "downloadUrl": "https://files.xplodingeggo.space/Speed_Jump_2_By_dmc/sj2.udk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1429288182",
+    "format": "udk"
   }
 ]
