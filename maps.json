@@ -284,5 +284,17 @@
     "downloadUrl": "https://files.xplodingeggo.space/Speed_Jump_Trials_3_Reversed/sjt3r.udk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1767669013",
     "format": "udk"
+  },
+  {
+    "Title": "Speed Jump: Boost - By dmc",
+    "Author": "dmc",
+    "Description": "An obstacle course. Difficulty: Extreme Note: To eliminate flickering - Turn off Ambient Occlusion in video settings. ~~~~~~~~~~~~~~~~~~ Map list: Noob Dribble - https://steamcommunity.com/sharedfiles/filedetails/?id=1843822064 Hornets Nest - https://steamcommunity.com/sharedfile",
+    "category": [
+      "parkour"
+    ],
+    "PreviewUrl": "https://files.xplodingeggo.space/Speed_Jump_Boost_By_dmc/preview.jpg",
+    "downloadUrl": "https://files.xplodingeggo.space/Speed_Jump_Boost_By_dmc/sjb.udk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1421195368",
+    "format": "udk"
   }
 ]
