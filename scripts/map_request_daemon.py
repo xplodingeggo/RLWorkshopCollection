@@ -310,7 +310,7 @@ def process_job(wid: str, git_branch: str = "main") -> dict:
         "Title": title,
         "Author": author,
         "Description": description[:280],
-        "category": [],
+        "category": ["other"],
         "PreviewUrl": f"{base_url}/{preview_filename}" if preview_filename else "",
         "downloadUrl": f"{base_url}/{os.path.basename(map_file)}",
         "steamUrl": f"https://steamcommunity.com/sharedfiles/filedetails/?id={wid}",

@@ -164,7 +164,9 @@
     "Title": "Minute 2 Win It",
     "Author": "Rocket League Mapmaking",
     "Description": "SPONSORED BY SOLACE PATH! Speed through the course and score the ball into the logo to beat the map! From 8/23 8AM EST to 8/30 8PM EST there will be a $100 Prize Pool to the fastest time to complete the map! Good luck and happy speedrunning! Description here!",
-    "category": [],
+    "category": [
+      "other"
+    ],
     "PreviewUrl": "https://files.xplodingeggo.space/Minute_2_Win_It/Minute-to-win-it-2.jpg",
     "downloadUrl": "https://files.xplodingeggo.space/Minute_2_Win_It/Minute_2_Win_It_v2.udk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3788668348",
