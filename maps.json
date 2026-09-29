@@ -236,5 +236,17 @@
     "downloadUrl": "https://files.xplodingeggo.space/Speed_Jump_Rings_1_By_dmc/r1.udk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1768760178",
     "format": "udk"
+  },
+  {
+    "Title": "Obstacle Course #2 v1.1",
+    "Author": "French Fries",
+    "Description": "Fixed a wall that doesn't reset you in level 28 and a texture in level 30 French Fries presents the second map in the obstacle course series. If any textures appear black make sure to download and follow the instructions from https://rocketleaguemods.com/mods/textures-for-maps-an",
+    "category": [
+      "parkour"
+    ],
+    "PreviewUrl": "https://files.xplodingeggo.space/Obstacle_Course_2_v1_1/preview.jpg",
+    "downloadUrl": "https://files.xplodingeggo.space/Obstacle_Course_2_v1_1/ObstacleChallenge2.udk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=828803580",
+    "format": "udk"
   }
 ]
