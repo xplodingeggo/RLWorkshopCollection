@@ -212,5 +212,17 @@
     "downloadUrl": "https://files.xplodingeggo.space/Parkour_Map_2_It_s_moving/Obstacle2.udk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=844375200",
     "format": "udk"
+  },
+  {
+    "Title": "Speed Jump: Rings 2 - By dmc",
+    "Author": "dmc",
+    "Description": "An obstacle course. Difficulty: Intermediate ~~~~~~~~~~~~~~~~~~ Map list: Noob Dribble - https://steamcommunity.com/sharedfiles/filedetails/?id=1843822064 Hornets Nest - https://steamcommunity.com/sharedfiles/filedetails/?id=1827631206 Mean Puss Skatepark - https://steamcommunity",
+    "category": [
+      "parkour"
+    ],
+    "PreviewUrl": "https://files.xplodingeggo.space/Speed_Jump_Rings_2_By_dmc/preview.png",
+    "downloadUrl": "https://files.xplodingeggo.space/Speed_Jump_Rings_2_By_dmc/rings2.udk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1454827766",
+    "format": "udk"
   }
 ]
