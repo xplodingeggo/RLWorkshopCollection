@@ -13,6 +13,7 @@ const JOB_DONE_TTL_SECONDS = 90 * 24 * 60 * 60; // 90 days once successful
 const RATE_LIMIT_BUCKET_TTL = 3600;             // 1 hour
 const MAPS_JSON_URL =
   "https://raw.githubusercontent.com/xplodingeggo/RLWorkshopCollection/main/maps.json";
+const ALLOWED_CATEGORIES = new Set(["training", "dribble", "parkour", "fun", "other"]);
 
 function cors(env) {
   return {
@@ -90,6 +91,10 @@ async function handleSubmit(request, env) {
     return json({ error: "invalid_workshop_id" }, env, 400);
   }
 
+  const categories = Array.isArray(body.categories)
+    ? [...new Set(body.categories.filter((c) => ALLOWED_CATEGORIES.has(c)))]
+    : [];
+
   // Check the live catalog before spending a Turnstile round-trip or
   // touching the queue at all — covers maps added before this feature
   // existed, or manually since, that never got a KV `submitted:` entry.
@@ -132,7 +137,7 @@ async function handleSubmit(request, env) {
 
   const jobId = crypto.randomUUID();
   const now = Date.now();
-  const job = { wid, status: "queued", createdAt: now, updatedAt: now, ip_hash: ipHash };
+  const job = { wid, status: "queued", createdAt: now, updatedAt: now, ip_hash: ipHash, categories };
   await env.MAPREQUESTS.put(`job:${jobId}`, JSON.stringify(job), { expirationTtl: JOB_TTL_SECONDS });
   await env.MAPREQUESTS.put(`submitted:${wid}`, jobId, { expirationTtl: JOB_TTL_SECONDS });
 
@@ -141,7 +146,34 @@ async function handleSubmit(request, env) {
   index.push(jobId);
   await env.MAPREQUESTS.put("queue:index", JSON.stringify(index));
 
+  triggerDaemonRunNow(env); // best-effort — the schedule is the real fallback
+
   return json({ jobId, status: "queued" }, env);
+}
+
+async function triggerDaemonRunNow(env) {
+  // The 5-min schedule is unreliable in practice (GitHub deprioritizes
+  // common tick marks like */5 under load), so kick the workflow off
+  // immediately instead of waiting on it. Failure here is non-fatal —
+  // the schedule still exists as a backstop.
+  if (!env.GITHUB_DISPATCH_TOKEN) return;
+  try {
+    await fetch(
+      "https://api.github.com/repos/xplodingeggo/RLWorkshopCollection/actions/workflows/map-request-daemon.yml/dispatches",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${env.GITHUB_DISPATCH_TOKEN}`,
+          "User-Agent": "rlworkshop-maprequest-worker",
+          Accept: "application/vnd.github+json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ref: "main" }),
+      }
+    );
+  } catch {
+    // swallow — schedule fallback covers this
+  }
 }
 
 async function handleStatus(jobId, env) {
@@ -170,7 +202,7 @@ async function handleNextJob(request, env) {
     job.updatedAt = Date.now();
     await env.MAPREQUESTS.put(`job:${jobId}`, JSON.stringify(job), { expirationTtl: JOB_TTL_SECONDS });
 
-    return json({ jobId, wid: job.wid }, env);
+    return json({ jobId, wid: job.wid, categories: job.categories || [] }, env);
   }
 
   await env.MAPREQUESTS.put("queue:index", JSON.stringify(index));
@@ -188,7 +220,7 @@ async function handleNextJob(request, env) {
       job.status = "downloading";
       job.updatedAt = Date.now();
       await env.MAPREQUESTS.put(key.name, JSON.stringify(job), { expirationTtl: JOB_TTL_SECONDS });
-      return json({ jobId, wid: job.wid }, env);
+      return json({ jobId, wid: job.wid, categories: job.categories || [] }, env);
     }
   }
 

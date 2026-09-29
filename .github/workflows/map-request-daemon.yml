@@ -10,7 +10,10 @@ name: Map Request Daemon
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    # Offset from :00/:05/:10... on purpose — GitHub deprioritizes the
+    # exact top-of-5-minutes tick under load, this is mostly a backstop
+    # anyway since /submit triggers a run immediately via workflow_dispatch.
+    - cron: "3,8,13,18,23,28,33,38,43,48,53,58 * * * *"
   workflow_dispatch: {}
 
 permissions:

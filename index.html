@@ -331,6 +331,17 @@
     }
     .modal-box input[type="text"]:focus { outline: none; border-color: var(--border-hover); }
     .cf-turnstile { margin-bottom: 1rem; }
+    .tag-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
+    .tag-picker label {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 999px;
+      padding: 5px 12px; font-size: 12px; color: var(--text2); cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .tag-picker label:has(input:checked) {
+      border-color: var(--border-hover); color: var(--text); background: var(--accent-glow);
+    }
+    .tag-picker input { accent-color: var(--accent); }
     .modal-submit {
       width: 100%; background: var(--accent); color: #fff; border: none;
       padding: 10px; border-radius: 8px; font-family: var(--font);
@@ -415,8 +426,16 @@
   <div class="modal-box">
     <button class="modal-close" id="request-modal-close" aria-label="Close">✕</button>
     <h3>Request a Workshop Map</h3>
-    <p class="hint">Paste a Steam Workshop URL or ID for a Rocket League map. We'll download it and add it to the archive automatically.</p>
+    <p class="hint">Paste a Steam Workshop URL or ID for a Rocket League map. We'll download it and add it to the archive automatically — usually within about 10 minutes. You can close this tab or leave the site; check progress anytime in the <strong>Requests</strong> panel (bottom-right).</p>
     <input type="text" id="request-input" placeholder="https://steamcommunity.com/sharedfiles/filedetails/?id=... or just the ID" autocomplete="off" />
+    <p class="hint" style="margin-bottom:0.5rem;">Tags (optional):</p>
+    <div class="tag-picker" id="request-tags">
+      <label><input type="checkbox" value="training"> Training</label>
+      <label><input type="checkbox" value="dribble"> Dribble</label>
+      <label><input type="checkbox" value="parkour"> Parkour</label>
+      <label><input type="checkbox" value="fun"> Fun</label>
+      <label><input type="checkbox" value="other"> Other</label>
+    </div>
     <div class="cf-turnstile" id="request-turnstile" data-sitekey="0x4AAAAAAFI3rXoiWK2E3xtM"></div>
     <button class="modal-submit" id="request-submit-btn">Submit</button>
     <div class="modal-status" id="request-status"></div>
@@ -793,6 +812,7 @@
 
   function resetModal() {
     input.value = '';
+    document.querySelectorAll('#request-tags input:checked').forEach(el => el.checked = false);
     submitBtn.disabled = false;
     submitBtn.textContent = 'Submit';
     statusEl.className = 'modal-status';
@@ -811,8 +831,8 @@
   }
 
   const STATUS_COPY = {
-    queued: 'Waiting in queue…',
-    downloading: 'Downloading from Steam Workshop…',
+    queued: 'Queued — usually starts within a minute or two. Safe to close this tab; track it in the Requests panel.',
+    downloading: 'Downloading from Steam Workshop… (~10 min total, feel free to leave this tab)',
     uploading: 'Uploading files…',
   };
 
@@ -878,6 +898,10 @@
     }
     if (!turnstileToken) { setStatus('Please complete the verification widget.', 'error'); return; }
 
+    const categories = Array.from(
+      document.querySelectorAll('#request-tags input:checked')
+    ).map(el => el.value);
+
     submitBtn.disabled = true;
     submitBtn.textContent = 'Submitting…';
     setStatus('Submitting…');
@@ -885,7 +909,7 @@
     fetch(`${WORKER_BASE_URL}/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ input: value, turnstileToken }),
+      body: JSON.stringify({ input: value, turnstileToken, categories }),
     })
       .then(r => r.json())
       .then(data => {

@@ -224,7 +224,8 @@ def rclone_upload(local_path: str, remote_folder: str) -> bool:
     return result.returncode == 0
 
 
-def process_job(wid: str, git_branch: str = "main", report=None) -> dict:
+def process_job(wid: str, git_branch: str = "main", report=None,
+                 categories=None) -> dict:
     """Runs one full job: validate -> dedupe -> download -> upload -> commit+push.
     Returns {status, message?, entry?} matching the Worker's /job-result shape.
     status is one of: done, failed, duplicate, not_rl, not_found
@@ -344,7 +345,7 @@ def process_job(wid: str, git_branch: str = "main", report=None) -> dict:
         "Title": title,
         "Author": author,
         "Description": description[:280],
-        "category": ["other"],
+        "category": categories or ["other"],
         "PreviewUrl": f"{base_url}/{preview_filename}" if preview_filename else "",
         "downloadUrl": f"{base_url}/{os.path.basename(map_file)}",
         "steamUrl": f"https://steamcommunity.com/sharedfiles/filedetails/?id={wid}",
@@ -401,7 +402,8 @@ def try_one_job(base_url: str, headers: dict, git_branch: str) -> bool:
 
     job = r.json()
     job_id, wid = job["jobId"], job["wid"]
-    log(f"Picked up job {job_id} (wid={wid})")
+    categories = job.get("categories") or None
+    log(f"Picked up job {job_id} (wid={wid}, categories={categories})")
 
     def report(status, **fields):
         try:
@@ -411,7 +413,7 @@ def try_one_job(base_url: str, headers: dict, git_branch: str) -> bool:
             log(f"Progress report failed (non-fatal): {e}")
 
     try:
-        result = process_job(wid, git_branch=git_branch, report=report)
+        result = process_job(wid, git_branch=git_branch, report=report, categories=categories)
     except Exception as e:
         log(f"process_job crashed: {e}")
         result = {"status": "failed", "message": f"daemon exception: {e}"}
