@@ -71,6 +71,37 @@ def sanitize_title(title: str) -> str:
     return s or "Untitled_Map"
 
 
+def strip_bbcode(text: str) -> str:
+    """Steam Workshop descriptions use BBCode ([h1], [b], [url], etc.) which
+    would otherwise show up as literal tag text on the site."""
+    text = re.sub(r"\[/?[a-zA-Z0-9=\"'.:/_ -]+\]", "", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def resolve_persona_name(steamid64: str, daemon_conf: dict):
+    """Steam's GetPublishedFileDetails only returns a raw SteamID64 for the
+    creator; resolving it to a display name needs the separate
+    ISteamUser/GetPlayerSummaries endpoint and its own Web API key."""
+    if not steamid64:
+        return None
+    api_key = daemon_conf.get("STEAM_API_KEY", "").strip()
+    if not api_key:
+        return None
+    import requests
+    try:
+        r = requests.get(
+            "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/",
+            params={"key": api_key, "steamids": steamid64}, timeout=10,
+        )
+        r.raise_for_status()
+        players = r.json().get("response", {}).get("players", [])
+        if players:
+            return players[0].get("personaname")
+    except Exception:
+        pass
+    return None
+
+
 def get_published_file_details(wid: str):
     import requests
     r = requests.post(
@@ -195,9 +226,10 @@ def process_job(wid: str, git_branch: str = "main") -> dict:
 
     title = details.get("title") or f"Workshop Item {wid}"
     creator_steamid = details.get("creator", "")
-    description = details.get("file_description", "") or ""
+    description = strip_bbcode(details.get("description", "") or "")
     preview_url = details.get("preview_url", "")
-    log(f"[{wid}] Title: {title!r}, appid={consumer_appid}")
+    author = resolve_persona_name(creator_steamid, daemon_conf) or creator_steamid or "Unknown"
+    log(f"[{wid}] Title: {title!r}, appid={consumer_appid}, author={author!r}")
 
     # 2. De-dupe against maps.json (belt-and-braces beyond Worker KV)
     git("fetch", "origin")
@@ -276,7 +308,7 @@ def process_job(wid: str, git_branch: str = "main") -> dict:
     base_url = f"https://files.xplodingeggo.space/{folder}"
     entry = {
         "Title": title,
-        "Author": creator_steamid or "Unknown",
+        "Author": author,
         "Description": description[:280],
         "category": [],
         "PreviewUrl": f"{base_url}/{preview_filename}" if preview_filename else "",
