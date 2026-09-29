@@ -1083,6 +1083,9 @@
     // accidentally trip it (or get eaten by it).
     const tag = (e.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea') return;
+    // Ignore key-repeat from a held key — holding Up a beat too long would
+    // otherwise fire several 'ArrowUp' keydowns and break the sequence.
+    if (e.repeat) return;
 
     const expected = KONAMI_SEQUENCE[konamiProgress];
     const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
