@@ -211,6 +211,8 @@ def rclone_upload(local_path: str, remote_folder: str) -> bool:
         ["rclone", "copy", local_path, f"r2:files/{remote_folder}/"],
         capture_output=True, text=True,
     )
+    if result.returncode != 0:
+        log(f"  rclone failed (exit {result.returncode}): {result.stderr.strip()[:500]}")
     return result.returncode == 0
 
 
