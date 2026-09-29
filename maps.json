@@ -180,7 +180,8 @@
     "Author": "Whifftastic",
     "Description": "Lucid Rings is an aerial training rings map of medium-hard difficulty. Whifftastic | Huss Gaming ~~~~~~ MUST HAVE WORKSHOP TEXTURE PACK FOR VISUALS: (Map still functions as normal) If you do not have the texture pack go to https://rocketleaguemods.com/mods/workshop-textures/ down",
     "category": [
-      "other"
+      "training",
+      "parkour"
     ],
     "PreviewUrl": "https://files.xplodingeggo.space/Lucid_Rings/LucidRingsPreview.jpg",
     "downloadUrl": "https://files.xplodingeggo.space/Lucid_Rings/WhiffRings2.udk",
