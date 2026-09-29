@@ -171,5 +171,17 @@
     "downloadUrl": "https://files.xplodingeggo.space/Minute_2_Win_It/Minute_2_Win_It_v2.udk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3788668348",
     "format": "udk"
+  },
+  {
+    "Title": "Lucid Rings",
+    "Author": "Whifftastic",
+    "Description": "Lucid Rings is an aerial training rings map of medium-hard difficulty. Whifftastic | Huss Gaming ~~~~~~ MUST HAVE WORKSHOP TEXTURE PACK FOR VISUALS: (Map still functions as normal) If you do not have the texture pack go to https://rocketleaguemods.com/mods/workshop-textures/ down",
+    "category": [
+      "other"
+    ],
+    "PreviewUrl": "https://files.xplodingeggo.space/Lucid_Rings/LucidRingsPreview.jpg",
+    "downloadUrl": "https://files.xplodingeggo.space/Lucid_Rings/WhiffRings2.udk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2116244468",
+    "format": "udk"
   }
 ]
