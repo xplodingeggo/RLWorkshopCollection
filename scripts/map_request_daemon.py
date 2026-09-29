@@ -153,11 +153,19 @@ def git(*args, cwd=REPO_DIR, check=True):
 IMAGE_EXTS = {".jpg", ".jpeg", ".jfif", ".png"}
 
 
+# Boilerplate files bundled with every UDK-based Rocket League workshop map
+# by the SDK/editor itself — not the actual map, regardless of size.
+BOILERPLATE_FILENAMES = {"maptemplates.upk", "editorlandscaperesources.upk",
+                          "workshopiteminfo.json"}
+
+
 def largest_file(root_dir: str, exclude_exts=frozenset()):
     best_path, best_size = None, -1
     for dirpath, _, filenames in os.walk(root_dir):
         for fn in filenames:
             if os.path.splitext(fn)[1].lower() in exclude_exts:
+                continue
+            if fn.lower() in BOILERPLATE_FILENAMES:
                 continue
             p = os.path.join(dirpath, fn)
             try:
