@@ -12,7 +12,10 @@
   {
     "Title": "Bumblebee Mode",
     "Author": "ThundaSurge",
-    "category": "fun",
+    "category": [
+      "fun",
+      "other"
+    ],
     "Description": "A swarm of bees has invaded Rocket League and are disrupting the game.",
     "PreviewUrl": "https://files.xplodingeggo.space/Bumblebee_Mode/Bumblebee_Mode.jfif",
     "downloadUrl": "https://files.xplodingeggo.space/Bumblebee_Mode/Bumblebee_mode.upk",
