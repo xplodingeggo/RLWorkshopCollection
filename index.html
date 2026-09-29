@@ -354,6 +354,7 @@
     }
     .modal-box input[type="text"]:focus { outline: none; border-color: var(--border-hover); }
     .cf-turnstile { margin-bottom: 1rem; }
+    body.admin-mode #request-turnstile { display: none; }
     .tag-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
     .tag-picker label {
       display: flex; align-items: center; gap: 5px;
@@ -948,7 +949,10 @@
     if (window.turnstile && window.turnstile.getResponse) {
       turnstileToken = window.turnstile.getResponse('#request-turnstile') || '';
     }
-    if (!turnstileToken) { setStatus('Please complete the verification widget.', 'error'); return; }
+    if (!adminToken && !turnstileToken) {
+      setStatus('Please complete the verification widget.', 'error');
+      return;
+    }
 
     const categories = Array.from(
       document.querySelectorAll('#request-tags input:checked')
@@ -958,9 +962,12 @@
     submitBtn.textContent = 'Submitting…';
     setStatus('Submitting…');
 
+    const headers = { 'Content-Type': 'application/json' };
+    if (adminToken) headers.Authorization = `Bearer ${adminToken}`;
+
     fetch(`${WORKER_BASE_URL}/submit`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ input: value, turnstileToken, categories }),
     })
       .then(r => r.json())

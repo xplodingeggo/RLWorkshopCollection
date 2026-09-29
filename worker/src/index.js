@@ -107,22 +107,33 @@ async function handleSubmit(request, env) {
 
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
 
-  const turnstileOk = await verifyTurnstile(body.turnstileToken, ip, env);
-  if (!turnstileOk) {
-    return json({ error: "turnstile_failed" }, env, 403);
+  // A logged-in admin has already proven who they are with the password —
+  // skip Turnstile and the per-IP quota entirely for them. (The Cloudflare
+  // zone-level burst guard on /submit still applies to everyone; that's
+  // WAF-layer config outside the Worker, not something to bypass per-request.)
+  const isAdmin = await requireAdminAuth(request, env);
+
+  if (!isAdmin) {
+    const turnstileOk = await verifyTurnstile(body.turnstileToken, ip, env);
+    if (!turnstileOk) {
+      return json({ error: "turnstile_failed" }, env, 403);
+    }
   }
 
   // Coarse hour-bucketed per-IP rate limit: read first (free), only write
   // if under threshold, so already-blocked repeat abuse costs no writes.
+  // Skipped entirely for admin — no read, no write, no counter kept.
   const ipHash = await hashIp(ip);
-  const hourBucket = new Date().toISOString().slice(0, 13).replace(/[-T:]/g, "");
-  const rlKey = `rl:${ipHash}:${hourBucket}`;
-  const limit = parseInt(env.RATE_LIMIT_PER_HOUR || "5", 10);
-  const current = parseInt((await env.MAPREQUESTS.get(rlKey)) || "0", 10);
-  if (current >= limit) {
-    return json({ error: "rate_limited" }, env, 429);
+  if (!isAdmin) {
+    const hourBucket = new Date().toISOString().slice(0, 13).replace(/[-T:]/g, "");
+    const rlKey = `rl:${ipHash}:${hourBucket}`;
+    const limit = parseInt(env.RATE_LIMIT_PER_HOUR || "5", 10);
+    const current = parseInt((await env.MAPREQUESTS.get(rlKey)) || "0", 10);
+    if (current >= limit) {
+      return json({ error: "rate_limited" }, env, 429);
+    }
+    await env.MAPREQUESTS.put(rlKey, String(current + 1), { expirationTtl: RATE_LIMIT_BUCKET_TTL });
   }
-  await env.MAPREQUESTS.put(rlKey, String(current + 1), { expirationTtl: RATE_LIMIT_BUCKET_TTL });
 
   // De-dupe: if this workshop id already has a live/duplicate job, hand
   // back the existing job instead of creating a new one.
