@@ -10,6 +10,10 @@ See ~/.claude/plans/federated-hugging-puddle.md for the full design.
 
 Standalone test mode (no Worker needed):
   python3 map_request_daemon.py --test-wid 2968144588 --branch test/map-request-daemon
+
+Real polling loop (needs WORKER_BASE_URL + DAEMON_SECRET in
+~/.config/hebnix-linux-dev/map-daemon.env):
+  python3 map_request_daemon.py
 """
 import argparse
 import configparser
@@ -299,6 +303,56 @@ def process_job(wid: str, git_branch: str = "main") -> dict:
     return {"status": "done", "entry": entry}
 
 
+POLL_INTERVAL_SECONDS = 20
+
+
+def run_poll_loop(git_branch: str):
+    import requests
+
+    conf = load_daemon_conf()
+    base_url = conf.get("WORKER_BASE_URL", "").rstrip("/")
+    secret = conf.get("DAEMON_SECRET", "")
+    if not base_url or not secret:
+        sys.exit(f"WORKER_BASE_URL and DAEMON_SECRET must be set in {DAEMON_CONF_PATH}")
+
+    headers = {"Authorization": f"Bearer {secret}"}
+    log(f"Polling {base_url} every {POLL_INTERVAL_SECONDS}s...")
+
+    while True:
+        try:
+            r = requests.get(f"{base_url}/next-job", headers=headers, timeout=15)
+        except Exception as e:
+            log(f"Poll failed: {e}")
+            time.sleep(POLL_INTERVAL_SECONDS)
+            continue
+
+        if r.status_code == 204:
+            time.sleep(POLL_INTERVAL_SECONDS)
+            continue
+        if r.status_code != 200:
+            log(f"Unexpected /next-job response: {r.status_code} {r.text[:200]}")
+            time.sleep(POLL_INTERVAL_SECONDS)
+            continue
+
+        job = r.json()
+        job_id, wid = job["jobId"], job["wid"]
+        log(f"Picked up job {job_id} (wid={wid})")
+
+        try:
+            result = process_job(wid, git_branch=git_branch)
+        except Exception as e:
+            log(f"process_job crashed: {e}")
+            result = {"status": "failed", "message": f"daemon exception: {e}"}
+
+        try:
+            requests.post(f"{base_url}/job-result", headers=headers, timeout=15,
+                          json={"jobId": job_id, **result})
+        except Exception as e:
+            log(f"Failed to report job result: {e}")
+
+        # No sleep here — immediately check for another queued job.
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--test-wid", help="Run one job standalone, no Worker involved.")
@@ -311,8 +365,7 @@ def main():
         print(json.dumps(result, indent=2))
         return
 
-    print("Worker polling loop not yet wired up (Stage 2). "
-          "Use --test-wid <id> --branch <branch> to test job processing standalone.")
+    run_poll_loop(git_branch=args.branch)
 
 
 if __name__ == "__main__":
