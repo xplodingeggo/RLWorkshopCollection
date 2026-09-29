@@ -260,5 +260,17 @@
     "downloadUrl": "https://files.xplodingeggo.space/Speed_Jump_2_By_dmc/sj2.udk",
     "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1429288182",
     "format": "udk"
+  },
+  {
+    "Title": "Obstacle Course 1",
+    "Author": "French Fries",
+    "Description": "A series of flying obstacle challenges - Made by French Fries To play the map: Hit subscribe => launch rocket league => go to extras => workshop and selec the map As far as i'm aware it only works on PC If you are interested follow me on twitter ( https://twitter.com/FrenchFriesR",
+    "category": [
+      "parkour"
+    ],
+    "PreviewUrl": "https://files.xplodingeggo.space/Obstacle_Course_1/preview.jpg",
+    "downloadUrl": "https://files.xplodingeggo.space/Obstacle_Course_1/ObstacleCourse1.udk",
+    "steamUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=814207936",
+    "format": "udk"
   }
 ]
