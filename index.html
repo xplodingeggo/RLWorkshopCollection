@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -295,6 +296,56 @@
     footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--text3); font-size: 13px; }
     footer a { color: var(--text2); text-decoration: none; }
     footer a:hover { color: var(--accent); }
+
+    /* ── Request Map modal ── */
+    .btn-request {
+      background: transparent; color: var(--accent2); border: 1px solid rgba(79,163,232,0.35);
+      padding: 6px 15px; border-radius: 7px;
+      font-family: var(--font); font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: background 0.15s, color 0.15s;
+    }
+    .btn-request:hover { background: var(--accent-glow); }
+
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(8,9,13,0.72); backdrop-filter: blur(3px);
+      align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); max-width: 440px; width: 100%;
+      padding: 1.75rem; position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem; background: none; border: none;
+      color: var(--text3); cursor: pointer; font-size: 18px; line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-box h3 { font-size: 17px; font-weight: 600; margin-bottom: 0.4rem; }
+    .modal-box p.hint { font-size: 13px; color: var(--text2); font-weight: 300; margin-bottom: 1.1rem; }
+    .modal-box input[type="text"] {
+      width: 100%; background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 12px; color: var(--text);
+      font-family: var(--font); font-size: 14px; margin-bottom: 1rem;
+    }
+    .modal-box input[type="text"]:focus { outline: none; border-color: var(--border-hover); }
+    .cf-turnstile { margin-bottom: 1rem; }
+    .modal-submit {
+      width: 100%; background: var(--accent); color: #fff; border: none;
+      padding: 10px; border-radius: 8px; font-family: var(--font);
+      font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s;
+    }
+    .modal-submit:hover:not(:disabled) { background: var(--accent2); color: #0d0f14; }
+    .modal-submit:disabled { opacity: 0.5; cursor: default; }
+    .modal-status {
+      margin-top: 1rem; font-size: 13px; color: var(--text2);
+      display: none; padding: 10px 12px; border-radius: 8px; background: var(--card);
+      border: 1px solid var(--border);
+    }
+    .modal-status.show { display: block; }
+    .modal-status.error { color: #f5867e; border-color: rgba(245,134,126,0.3); }
+    .modal-status.ok { color: #7ec8a0; border-color: rgba(126,200,160,0.3); }
   </style>
 </head>
 <body>
@@ -306,9 +357,22 @@
   </a>
   <nav>
     <a href="https://github.com/xplodingeggo/RLWorkshopCollection" target="_blank" rel="noopener">GitHub</a>
+    <button class="btn-request" id="request-map-btn">Request a Map</button>
     <a href="https://github.com/xplodingeggo/RLWorkshopCollection#-adding-a-map" class="btn-contribute">+ Submit Map</a>
   </nav>
 </header>
+
+<div class="modal-overlay" id="request-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="request-modal-close" aria-label="Close">✕</button>
+    <h3>Request a Workshop Map</h3>
+    <p class="hint">Paste a Steam Workshop URL or ID for a Rocket League map. We'll download it and add it to the archive automatically.</p>
+    <input type="text" id="request-input" placeholder="https://steamcommunity.com/sharedfiles/filedetails/?id=... or just the ID" autocomplete="off" />
+    <div class="cf-turnstile" id="request-turnstile" data-sitekey="0x4AAAAAAFI3rXoiWK2E3xtM"></div>
+    <button class="modal-submit" id="request-submit-btn">Submit</button>
+    <div class="modal-status" id="request-status"></div>
+  </div>
+</div>
 
 <section class="hero">
   <div class="hero-badge">Archived Workshop maps</div>
@@ -653,6 +717,139 @@
       document.getElementById('empty').style.display = 'block';
       document.getElementById('empty').innerHTML = '<h3>No maps loaded</h3><p>Add map entries to <code>maps.json</code> to get started.</p>';
     });
+
+  // ── Request a Map modal ─────────────────────────────────────
+  const WORKER_BASE_URL = 'https://rlworkshop-maprequest.stupidone786.workers.dev';
+  const POLL_INTERVAL_MS = 3500;
+  const POLL_TIMEOUT_MS = 10 * 60 * 1000;
+
+  const modal = document.getElementById('request-modal');
+  const openBtn = document.getElementById('request-map-btn');
+  const closeBtn = document.getElementById('request-modal-close');
+  const input = document.getElementById('request-input');
+  const submitBtn = document.getElementById('request-submit-btn');
+  const statusEl = document.getElementById('request-status');
+  let pollHandle = null;
+
+  function resetModal() {
+    input.value = '';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit';
+    statusEl.className = 'modal-status';
+    statusEl.textContent = '';
+    if (window.turnstile) { try { turnstile.reset('#request-turnstile'); } catch (e) {} }
+    if (pollHandle) { clearTimeout(pollHandle); pollHandle = null; }
+  }
+
+  openBtn.addEventListener('click', () => { resetModal(); modal.classList.add('open'); });
+  closeBtn.addEventListener('click', () => { modal.classList.remove('open'); if (pollHandle) clearTimeout(pollHandle); });
+  modal.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.remove('open'); if (pollHandle) clearTimeout(pollHandle); } });
+
+  function setStatus(text, kind) {
+    statusEl.textContent = text;
+    statusEl.className = 'modal-status show' + (kind ? ' ' + kind : '');
+  }
+
+  const STATUS_COPY = {
+    queued: 'Waiting in queue…',
+    downloading: 'Downloading from Steam Workshop…',
+    uploading: 'Uploading files…',
+  };
+
+  function pollStatus(jobId, startedAt) {
+    fetch(`${WORKER_BASE_URL}/status/${jobId}`)
+      .then(r => r.json())
+      .then(job => {
+        if (job.status === 'done') {
+          setStatus('Added! 🎉 Refreshing the list…', 'ok');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit';
+          fetch('maps.json?t=' + Date.now())
+            .then(r => r.json())
+            .then(maps => { renderMaps(maps); });
+          return;
+        }
+        if (job.status === 'duplicate') {
+          setStatus('This map is already on the site.', 'ok');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit';
+          return;
+        }
+        if (job.status === 'not_rl') {
+          setStatus("That Workshop item isn't a Rocket League map.", 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit';
+          return;
+        }
+        if (job.status === 'not_found') {
+          setStatus("Couldn't find that Workshop item — check the ID/URL.", 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit';
+          return;
+        }
+        if (job.status === 'failed') {
+          setStatus('Something went wrong' + (job.message ? ': ' + job.message : '.') + ' Try again later.', 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit';
+          return;
+        }
+        // still in flight
+        if (Date.now() - startedAt > POLL_TIMEOUT_MS) {
+          setStatus('Still queued — the map curator\'s machine may be offline. Check back later.', 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit';
+          return;
+        }
+        setStatus(STATUS_COPY[job.status] || 'Working…');
+        pollHandle = setTimeout(() => pollStatus(jobId, startedAt), POLL_INTERVAL_MS);
+      })
+      .catch(() => {
+        pollHandle = setTimeout(() => pollStatus(jobId, startedAt), POLL_INTERVAL_MS);
+      });
+  }
+
+  submitBtn.addEventListener('click', () => {
+    const value = input.value.trim();
+    if (!value) { setStatus('Paste a Workshop URL or ID first.', 'error'); return; }
+
+    let turnstileToken = '';
+    if (window.turnstile && window.turnstile.getResponse) {
+      turnstileToken = window.turnstile.getResponse('#request-turnstile') || '';
+    }
+    if (!turnstileToken) { setStatus('Please complete the verification widget.', 'error'); return; }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting…';
+    setStatus('Submitting…');
+
+    fetch(`${WORKER_BASE_URL}/submit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ input: value, turnstileToken }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.error) {
+          const messages = {
+            invalid_workshop_id: "That doesn't look like a valid Workshop URL or ID.",
+            turnstile_failed: 'Verification failed — please try again.',
+            rate_limited: "You've hit the request limit — try again later.",
+          };
+          setStatus(messages[data.error] || ('Error: ' + data.error), 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit';
+          if (window.turnstile) { try { turnstile.reset('#request-turnstile'); } catch (e) {} }
+          return;
+        }
+        setStatus(STATUS_COPY[data.status] || 'Queued…');
+        pollStatus(data.jobId, Date.now());
+      })
+      .catch(() => {
+        setStatus('Network error — please try again.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit';
+      });
+  });
 </script>
 </body>
 </html>
