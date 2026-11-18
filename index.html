@@ -481,8 +481,7 @@
 <section class="hero">
   <div class="hero-badge">Archived Workshop maps</div>
   <h1>Rocket League<br><span>Workshop Archive</span></h1>
-  <p>My archive of Rocket League custom Workshop maps.</p>
-  <p>Use the 'Request map' button to add any steam workshop map to the collection within 5-10 minutes~</p>
+  <p>My archive of Rocket League custom Workshop maps.<br>Use the 'Request map' button to add any steam workshop map to the collection within 5-10 minutes~</p>
   <div class="hero-stats">
     <div class="stat">
       <span class="stat-num" id="total-maps">0</span>
@@ -1006,7 +1005,7 @@
   // Polls the Worker directly (server-side state), so it shows the same
   // thing to every visitor and survives a tab close / refresh — nothing
   // here depends on who submitted what.
-  const ACTIVITY_POLL_MS = 6000;
+  const ACTIVITY_POLL_MS = 30000;
   const activityToggleBtn = document.getElementById('activity-toggle');
   const activityToggleLabel = document.getElementById('activity-toggle-label');
   const activityPanel = document.getElementById('activity-panel');
@@ -1065,8 +1064,23 @@
       .catch(() => { /* transient — next poll retries */ });
   }
 
-  refreshActivity();
-  setInterval(refreshActivity, ACTIVITY_POLL_MS);
+  // Only poll while the tab is visible — a backgrounded tab left open
+  // would otherwise hit the Worker all day for nothing.
+  let activityTimer = null;
+  function startActivityPolling() {
+    if (activityTimer !== null) return;
+    refreshActivity();
+    activityTimer = setInterval(refreshActivity, ACTIVITY_POLL_MS);
+  }
+  function stopActivityPolling() {
+    clearInterval(activityTimer);
+    activityTimer = null;
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') startActivityPolling();
+    else stopActivityPolling();
+  });
+  if (document.visibilityState === 'visible') startActivityPolling();
 
   // ── Konami code: reveals the Admin button ───────────────────
   const KONAMI_KEY = 'rlwc_konami_unlocked';

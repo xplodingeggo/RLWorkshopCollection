@@ -151,7 +151,7 @@ async function handleSubmit(request, env) {
   const jobId = crypto.randomUUID();
   const now = Date.now();
   const job = { wid, status: "queued", createdAt: now, updatedAt: now, ip_hash: ipHash, categories };
-  await env.MAPREQUESTS.put(`job:${jobId}`, JSON.stringify(job), { expirationTtl: JOB_TTL_SECONDS });
+  await putJob(env, jobId, job, JOB_TTL_SECONDS);
   await env.MAPREQUESTS.put(`submitted:${wid}`, jobId, { expirationTtl: JOB_TTL_SECONDS });
 
   const indexRaw = await env.MAPREQUESTS.get("queue:index");
@@ -202,6 +202,7 @@ async function handleNextJob(request, env) {
 
   const indexRaw = await env.MAPREQUESTS.get("queue:index");
   let index = indexRaw ? JSON.parse(indexRaw) : [];
+  const originalLength = index.length;
 
   while (index.length > 0) {
     const jobId = index.shift();
@@ -213,12 +214,16 @@ async function handleNextJob(request, env) {
     await env.MAPREQUESTS.put("queue:index", JSON.stringify(index));
     job.status = "downloading";
     job.updatedAt = Date.now();
-    await env.MAPREQUESTS.put(`job:${jobId}`, JSON.stringify(job), { expirationTtl: JOB_TTL_SECONDS });
+    await putJob(env, jobId, job, JOB_TTL_SECONDS);
 
     return json({ jobId, wid: job.wid, categories: job.categories || [] }, env);
   }
 
-  await env.MAPREQUESTS.put("queue:index", JSON.stringify(index));
+  // Only write when stale entries were dropped — an empty-queue poll
+  // shouldn't spend a KV write.
+  if (index.length !== originalLength) {
+    await env.MAPREQUESTS.put("queue:index", JSON.stringify(index));
+  }
 
   // Reconciliation fallback: queue:index writes aren't atomic across
   // concurrent /submit calls, so occasionally list() for any queued job
@@ -232,7 +237,7 @@ async function handleNextJob(request, env) {
       const jobId = key.name.slice("job:".length);
       job.status = "downloading";
       job.updatedAt = Date.now();
-      await env.MAPREQUESTS.put(key.name, JSON.stringify(job), { expirationTtl: JOB_TTL_SECONDS });
+      await putJob(env, jobId, job, JOB_TTL_SECONDS);
       return json({ jobId, wid: job.wid, categories: job.categories || [] }, env);
     }
   }
@@ -240,34 +245,90 @@ async function handleNextJob(request, env) {
   return new Response(null, { status: 204, headers: cors(env) });
 }
 
+// The public /jobs feed is served from a single precomputed KV key instead
+// of list() + one get() per job on every request. Every open page polls
+// /jobs, and the free plan allows only 1,000 KV list ops per day, so the
+// old approach hit that limit after about two hours of one open tab.
+// The snapshot is updated whenever a job is written, so a poll costs one
+// KV read.
+const JOBS_SNAPSHOT_KEY = "jobs:snapshot";
+const ACTIVE_STATUSES = ["queued", "downloading", "uploading"];
+const FINISHED_STATUSES = ["done", "failed", "not_rl", "not_found"];
+const RECENT_LIMIT = 8;
+
+function jobSummary(jobId, job) {
+  return {
+    jobId,
+    wid: job.wid,
+    title: job.title || null,
+    status: job.status,
+    message: job.message || null,
+    createdAt: job.createdAt,
+    updatedAt: job.updatedAt,
+  };
+}
+
+function buildSnapshot(summaries) {
+  const now = Date.now();
+  const jobs = summaries
+    .filter((j) => {
+      // Mirror the KV TTLs so expired jobs drop out of the feed too.
+      const ttl = j.status === "done" ? JOB_DONE_TTL_SECONDS : JOB_TTL_SECONDS;
+      return now - j.updatedAt < ttl * 1000;
+    })
+    .sort((a, b) => b.updatedAt - a.updatedAt);
+  return {
+    active: jobs.filter((j) => ACTIVE_STATUSES.includes(j.status)),
+    recent: jobs.filter((j) => FINISHED_STATUSES.includes(j.status)).slice(0, RECENT_LIMIT),
+  };
+}
+
+async function rebuildSnapshotFromKv(env) {
+  const summaries = [];
+  let cursor;
+  do {
+    const list = await env.MAPREQUESTS.list({ prefix: "job:", cursor });
+    for (const key of list.keys) {
+      const raw = await env.MAPREQUESTS.get(key.name);
+      if (raw) summaries.push(jobSummary(key.name.slice("job:".length), JSON.parse(raw)));
+    }
+    cursor = list.list_complete ? undefined : list.cursor;
+  } while (cursor);
+  const snapshot = buildSnapshot(summaries);
+  await env.MAPREQUESTS.put(JOBS_SNAPSHOT_KEY, JSON.stringify(snapshot));
+  return snapshot;
+}
+
+async function readSnapshot(env) {
+  const raw = await env.MAPREQUESTS.get(JOBS_SNAPSHOT_KEY);
+  return raw ? JSON.parse(raw) : null;
+}
+
+async function upsertSnapshot(env, jobId, job) {
+  // Read-modify-write is not atomic, but job updates are rare and the
+  // next update to any job rewrites the entry, so a lost race self-heals.
+  const snapshot = await readSnapshot(env);
+  if (!snapshot) {
+    await rebuildSnapshotFromKv(env);
+    return;
+  }
+  const others = [...snapshot.active, ...snapshot.recent].filter((j) => j.jobId !== jobId);
+  const next = buildSnapshot([jobSummary(jobId, job), ...others]);
+  await env.MAPREQUESTS.put(JOBS_SNAPSHOT_KEY, JSON.stringify(next));
+}
+
+async function putJob(env, jobId, job, ttl) {
+  await env.MAPREQUESTS.put(`job:${jobId}`, JSON.stringify(job), { expirationTtl: ttl });
+  await upsertSnapshot(env, jobId, job);
+}
+
 async function handleJobs(env) {
   // Public, persistent activity list — reflects Worker/KV state, not
   // anything held in a visitor's browser, so it survives tab close/refresh
   // and shows the same thing to every visitor.
-  const list = await env.MAPREQUESTS.list({ prefix: "job:" });
-  const jobs = [];
-  for (const key of list.keys) {
-    const raw = await env.MAPREQUESTS.get(key.name);
-    if (!raw) continue;
-    const job = JSON.parse(raw);
-    jobs.push({
-      jobId: key.name.slice("job:".length),
-      wid: job.wid,
-      title: job.title || null,
-      status: job.status,
-      message: job.message || null,
-      createdAt: job.createdAt,
-      updatedAt: job.updatedAt,
-    });
-  }
-  jobs.sort((a, b) => b.updatedAt - a.updatedAt);
-
-  const active = jobs.filter((j) => ["queued", "downloading", "uploading"].includes(j.status));
-  const recent = jobs
-    .filter((j) => ["done", "failed", "not_rl", "not_found"].includes(j.status))
-    .slice(0, 8);
-
-  return json({ active, recent }, env);
+  const snapshot = (await readSnapshot(env)) || (await rebuildSnapshotFromKv(env));
+  // Re-filter on read so jobs that expired since the last write drop out.
+  return json(buildSnapshot([...snapshot.active, ...snapshot.recent]), env);
 }
 
 function timingSafeEqual(a, b) {
@@ -420,7 +481,7 @@ async function handleJobResult(request, env) {
   if (title) job.title = title; // once known, kept even if a later update omits it
 
   const ttl = status === "done" ? JOB_DONE_TTL_SECONDS : JOB_TTL_SECONDS;
-  await env.MAPREQUESTS.put(`job:${jobId}`, JSON.stringify(job), { expirationTtl: ttl });
+  await putJob(env, jobId, job, ttl);
 
   if (status === "done" && job.wid) {
     await env.MAPREQUESTS.put(`submitted:${job.wid}`, jobId, { expirationTtl: ttl });
